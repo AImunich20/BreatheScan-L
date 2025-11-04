@@ -1,24 +1,22 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 
 app = Flask(__name__)
+app.secret_key = "breathe_secret_key"
 
-# โฟลเดอร์สำหรับเก็บไฟล์อัปโหลด
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# หน้า Home
+
 @app.route("/")
 def home():
     return render_template("home.html")
 
-# หน้า About
 @app.route("/about")
 def about():
     return render_template("about.html")
 
-# หน้า Research
 @app.route("/research")
 def research():
     return render_template("research.html")
@@ -27,58 +25,42 @@ def research():
 def HarmoMed():
     return render_template("HarmoMed.html")
 
-# หน้า Knowledge
 @app.route("/knowledge")
 def knowledge():
     return render_template("knowledge.html")
 
-# หน้า Test Model (รองรับ GET และ POST)
-@app.route("/test", methods=["GET", "POST"])
-def test():
-    if request.method == "POST":
-        # รับไฟล์
-        eye_image = request.files.get("eyeImage")
-        skin_image = request.files.get("skinImage")
-        enose_csv = request.files.get("enoseCSV")
-        questionnaire_csv = request.files.get("questionnaireCSV")
-        breath_csv = request.files.get("breathData")
-
-        uploaded_files = [eye_image, skin_image, enose_csv, questionnaire_csv, breath_csv]
-        saved_files = []
-
-        for f in uploaded_files:
-            if f:
-                filepath = os.path.join(app.config["UPLOAD_FOLDER"], f.filename)
-                f.save(filepath)
-                saved_files.append(f.filename)
-
-        # รับข้อมูลฟอร์ม
-        age = request.form.get("age")
-        gender = request.form.get("gender")
-        alcohol = request.form.get("alcohol")
-        sleep = request.form.get("sleep")
-        exercise = request.form.get("exercise")
-        diabetes = "diabetes" in request.form
-        obesity = "obesity" in request.form
-        hepatitis = "hepatitis" in request.form
-        family_history = "family_history" in request.form
-
-        # TODO: เรียกฟังก์ชัน AI Model ของคุณที่นี่
-        # result = run_ai_model(...)
-
-        return f"Received data: Age={age}, Gender={gender}, Alcohol={alcohol}, Files={saved_files}"
-
-    return render_template("test.html")
-
-# หน้า Contact
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
 
-@app.route("/analyze", methods=["POST"])
-def analyze():
-    # โค้ดรับไฟล์และฟอร์มเหมือนเดิม
-    return "Analyzing data..."
+
+# -------------------------------
+# TEST MODEL PAGE
+# -------------------------------
+@app.route("/test", methods=["GET", "POST"])
+def test():
+    if request.method == "POST":
+        file_keys = ["eyeImage", "skinImage", "enoseCSV", "questionnaireCSV", "breathData"]
+        saved_files = []
+
+        for key in file_keys:
+            f = request.files.get(key)
+            if f and f.filename != "":
+                path = os.path.join(app.config["UPLOAD_FOLDER"], f.filename)
+                f.save(path)
+                saved_files.append(f.filename)
+
+        if not saved_files:
+            flash("⚠️ Please upload all required files before submitting.", "error")
+            return redirect(url_for("test"))
+
+        # TODO: เชื่อมโมเดลจริงที่นี่
+        result = "✅ AI Analysis Result: Low liver disease risk"
+
+        flash(result, "success")
+        return render_template("test.html", result=result)
+
+    return render_template("test.html")
 
 
 if __name__ == "__main__":
