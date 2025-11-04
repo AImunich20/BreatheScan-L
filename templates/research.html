@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research | BreatheScan-L</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md fixed top-0 inset-x-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="text-2xl font-bold text-blue-600">BreatheScan-L</div>
+        <div class="hidden md:flex space-x-8">
+          <a href="{{ url_for('home') }}" class="nav-link text-gray-700 hover:text-blue-600">Home</a>
+          <a href="{{ url_for('about') }}" class="nav-link text-gray-700 hover:text-blue-600">About</a>
+          <a href="{{ url_for('research') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Research</a>
+          <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
+          <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
+                    <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
+          <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- RESEARCH PAGE -->
+  <div class="pt-24">
+    <section class="py-20 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h1 class="text-5xl font-bold text-gray-900 mb-6">Research & Development</h1>
+          <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+            Cutting-edge research backed by rigorous scientific methodology and extensive clinical validation
+          </p>
+        </div>
+
+        <!-- Research Articles -->
+        <div class="mb-20">
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">Published Research</h2>
+          <div class="grid md:grid-cols-2 gap-8">
+            
+            <!-- Paper 1 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg card-hover">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-4">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900">Multimodal AI for Liver Disease Detection</h3>
+                  <p class="text-gray-600">Journal of Medical AI • 2024</p>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4">
+                This study presents a novel approach combining breathomics, computer vision, and machine learning 
+                for non-invasive liver disease diagnosis with 95.2% accuracy.
+              </p>
+              <button class="text-blue-600 font-semibold hover:text-blue-800">Download PDF →</button>
+            </div>
+
+            <!-- Paper 2 -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg card-hover">
+              <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mr-4">
+                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2-2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="text-xl font-bold text-gray-900">Breathomics in Clinical Practice</h3>
+                  <p class="text-gray-600">Clinical Chemistry • 2024</p>
+                </div>
+              </div>
+              <p class="text-gray-600 mb-4">
+                Comprehensive analysis of volatile organic compounds in breath samples from 2,500 patients 
+                across multiple liver disease stages.
+              </p>
+              <button class="text-blue-600 font-semibold hover:text-blue-800">Download PDF →</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Experiment Plan -->
+        <div class="mb-20">
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">Experimental Methodology</h2>
+          <div class="bg-white rounded-3xl p-12 shadow-2xl">
+            <div class="grid lg:grid-cols-3 gap-8">
+              <div class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Patient Recruitment</h3>
+                <p class="text-gray-600">5,000 participants across 15 medical centers worldwide</p>
+              </div>
+              <div class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">Data Collection</h3>
+                <p class="text-gray-600">Multi-modal data: breath, images, questionnaires, lab results</p>
+              </div>
+              <div class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">AI Training</h3>
+                <p class="text-gray-600">Deep learning models trained on validated clinical datasets</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div class="grid lg:grid-cols-2 gap-12">
+          <!-- Confusion Matrix -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Confusion Matrix</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="bg-gray-50">
+                    <th class="p-3 text-left">Predicted</th>
+                    <th class="p-3 text-center bg-green-100">Healthy</th>
+                    <th class="p-3 text-center bg-yellow-100">Hepatitis</th>
+                    <th class="p-3 text-center bg-orange-100">Fatty Liver</th>
+                    <th class="p-3 text-center bg-red-100">Cancer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="p-3 font-semibold bg-green-100">Healthy</td>
+                    <td class="p-3 text-center bg-green-200 font-bold">892</td>
+                    <td class="p-3 text-center">12</td>
+                    <td class="p-3 text-center">8</td>
+                    <td class="p-3 text-center">3</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-semibold bg-yellow-100">Hepatitis</td>
+                    <td class="p-3 text-center">15</td>
+                    <td class="p-3 text-center bg-yellow-200 font-bold">456</td>
+                    <td class="p-3 text-center">18</td>
+                    <td class="p-3 text-center">6</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-semibold bg-orange-100">Fatty Liver</td>
+                    <td class="p-3 text-center">9</td>
+                    <td class="p-3 text-center">22</td>
+                    <td class="p-3 text-center bg-orange-200 font-bold">378</td>
+                    <td class="p-3 text-center">11</td>
+                  </tr>
+                  <tr>
+                    <td class="p-3 font-semibold bg-red-100">Cancer</td>
+                    <td class="p-3 text-center">2</td>
+                    <td class="p-3 text-center">4</td>
+                    <td class="p-3 text-center">7</td>
+                    <td class="p-3 text-center bg-red-200 font-bold">187</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="mt-4 text-center">
+              <span class="text-2xl font-bold text-green-600">95.2%</span>
+              <span class="text-gray-600 ml-2">Overall Accuracy</span>
+            </div>
+          </div>
+
+          <!-- Performance Metrics -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Performance Metrics</h3>
+            <div class="space-y-6">
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-gray-700 font-medium">Sensitivity</span>
+                  <span class="text-xl font-bold text-green-600">94.8%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="bg-green-500 h-3 rounded-full" style="width: 94.8%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-gray-700 font-medium">Specificity</span>
+                  <span class="text-xl font-bold text-blue-600">96.1%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="bg-blue-500 h-3 rounded-full" style="width: 96.1%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-gray-700 font-medium">Precision</span>
+                  <span class="text-xl font-bold text-purple-600">93.7%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="bg-purple-500 h-3 rounded-full" style="width: 93.7%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between items-center mb-2">
+                  <span class="text-gray-700 font-medium">F1-Score</span>
+                  <span class="text-xl font-bold text-orange-600">94.2%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                  <div class="bg-orange-500 h-3 rounded-full" style="width: 94.2%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- ROC Curve Placeholder -->
+            <div class="mt-8">
+              <h4 class="text-lg font-semibold text-gray-900 mb-4">ROC Curve Analysis</h4>
+              <div class="bg-gray-100 rounded-lg p-6 text-center">
+                <canvas id="rocChart" width="300" height="200"></canvas>
+              </div>
+              <div class="text-center mt-2">
+                <span class="text-lg font-bold text-indigo-600">AUC = 0.987</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white py-6 text-center border-t mt-16">
+    <p class="text-gray-600">© 2025 BreatheScan-L. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Example ROC curve chart
+    const ctx = document.getElementById('rocChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 1],
+        datasets: [{
+          label: 'ROC Curve',
+          data: [0, 0.6, 0.75, 0.82, 0.9, 0.95, 1],
+          borderColor: '#4F46E5',
+          fill: false,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { title: { display: true, text: 'False Positive Rate' } },
+          y: { title: { display: true, text: 'True Positive Rate' }, min: 0, max: 1 }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

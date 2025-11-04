@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BreatheScan-L | About</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 
+                9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 
+                0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-gray-900">BreatheScan-L</span>
+        </div>
+        <!-- Navigation Links -->
+        <div class="hidden md:flex space-x-8">
+          <a href="{{ url_for('home') }}" class="nav-link text-gray-700 hover:text-blue-600">Home</a>
+          <a href="{{ url_for('about') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">About</a>
+          <a href="{{ url_for('research') }}" class="nav-link text-gray-700 hover:text-blue-600">Research</a>
+          <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
+          <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
+                    <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
+          <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ABOUT PAGE -->
+  <section class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">About BreatheScan-L</h1>
+        <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+          Revolutionizing liver disease diagnosis through innovative AI technology and multimodal analysis
+        </p>
+      </div>
+
+      <!-- Project Introduction -->
+      <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+        <div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">Project Introduction</h2>
+          <p class="text-lg text-gray-600 mb-6">
+            BreatheScan-L represents a breakthrough in non-invasive medical diagnostics, combining artificial intelligence 
+            with advanced sensor technology to detect liver diseases at their earliest stages.
+          </p>
+          <p class="text-lg text-gray-600 mb-6">
+            Our mission is to make liver disease screening accessible, affordable, and accurate for everyone, 
+            potentially saving millions of lives through early detection and intervention.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-3">
+              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <span class="text-gray-700">95% accuracy in early-stage detection</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <span class="text-gray-700">Non-invasive and painless procedure</span>
+            </div>
+            <div class="flex items-center space-x-3">
+              <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <span class="text-gray-700">Results available in under 5 minutes</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl p-8 shadow-2xl">
+          <div class="text-center">
+            <div class="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 
+                  9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 
+                  0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">Advanced AI Technology</h3>
+            <p class="text-gray-600">Powered by machine learning algorithms trained on thousands of medical cases</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works -->
+      <div class="mb-20">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">How It Works</h2>
+        <div class="grid md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold text-white">1</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Breath Sample</h3>
+            <p class="text-gray-600">Patient provides breath sample using E-nose sensor</p>
+          </div>
+          <div class="text-center">
+            <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold text-white">2</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Image Capture</h3>
+            <p class="text-gray-600">Skin and eye images captured for visual analysis</p>
+          </div>
+          <div class="text-center">
+            <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold text-white">3</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Health Survey</h3>
+            <p class="text-gray-600">Complete comprehensive health questionnaire</p>
+          </div>
+          <div class="text-center">
+            <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl font-bold text-white">4</span>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">AI Analysis</h3>
+            <p class="text-gray-600">AI processes all data and provides diagnosis</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Objectives -->
+      <div class="bg-white rounded-3xl p-12 shadow-2xl">
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Project Objectives</h2>
+        <div class="grid md:grid-cols-2 gap-8">
+          <div class="space-y-6">
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Early Detection</h3>
+                <p class="text-gray-600">Identify liver diseases in their earliest stages when treatment is most effective</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Cost-Effective</h3>
+                <p class="text-gray-600">Reduce healthcare costs through affordable screening technology</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Global Access</h3>
+                <p class="text-gray-600">Make liver disease screening accessible worldwide, especially in underserved areas</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-6">
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">High Accuracy</h3>
+                <p class="text-gray-600">Achieve diagnostic accuracy comparable to traditional invasive methods</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Patient Comfort</h3>
+                <p class="text-gray-600">Eliminate the need for invasive procedures and reduce patient anxiety</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-4">
+              <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Data-Driven</h3>
+                <p class="text-gray-600">Continuously improve through machine learning and data analysis</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

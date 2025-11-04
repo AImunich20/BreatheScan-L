@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BreatheScan-L | Test Model</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-gray-50">
+
+  <!-- Navigation -->
+  <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 
+                9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 
+                0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+            </svg>
+          </div>
+          <span class="text-xl font-bold text-gray-900">BreatheScan-L</span>
+        </div>
+        <div class="hidden md:flex space-x-8">
+          <a href="{{ url_for('home') }}" class="nav-link text-gray-700 hover:text-blue-600">Home</a>
+          <a href="{{ url_for('about') }}" class="nav-link text-gray-700 hover:text-blue-600">About</a>
+          <a href="{{ url_for('research') }}" class="nav-link text-gray-700 hover:text-blue-600">Research</a>
+          <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
+          <a href="{{ url_for('test') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Test Model</a>
+          <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
+          <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- TEST MODEL PAGE -->
+  <section class="py-20 bg-gradient-to-br from-blue-50 to-purple-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">AI Liver Disease Test</h1>
+        <p class="text-xl text-gray-600">Complete our comprehensive AI-powered assessment for liver disease risk evaluation</p>
+      </div>
+
+      <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <form id="testForm" action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data" class="p-12">
+          <!-- Progress Bar -->
+          <div class="bg-gray-200 h-2 mb-8">
+            <div id="progress" class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600 h-2"></div>
+          </div>
+
+          <!-- Step 1: Upload Files -->
+          <div id="step1" class="test-step">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Step 1: Upload Files</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+
+              <!-- Eye Image -->
+              <div class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                           -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Eye Image</h3>
+                <p class="text-gray-600 mb-4">Upload a clear photo of your eyes</p>
+                <input type="file" name="eyeImage" id="eyeImage" accept="image/*" class="hidden" onchange="showFile(this, 'eyeFileName', 'eyeButton', 'eyePreview')">
+                <button id="eyeButton" type="button" onclick="document.getElementById('eyeImage').click()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Choose File</button>
+                <p id="eyeFileName" class="mt-3 text-sm text-gray-500"></p>
+                <img id="eyePreview" class="hidden mx-auto mt-4 rounded-lg shadow-md max-h-40">
+              </div>
+
+              <!-- Skin Image -->
+              <div class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Skin Image</h3>
+                <p class="text-gray-600 mb-4">Upload a photo of your skin (face/hands)</p>
+                <input type="file" name="skinImage" id="skinImage" accept="image/*" class="hidden" onchange="showFile(this, 'skinFileName', 'skinButton', 'skinPreview')">
+                <button id="skinButton" type="button" onclick="document.getElementById('skinImage').click()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Choose File</button>
+                <p id="skinFileName" class="mt-3 text-sm text-gray-500"></p>
+                <img id="skinPreview" class="hidden mx-auto mt-4 rounded-lg shadow-md max-h-40">
+              </div>
+
+              <!-- E-nose CSV -->
+              <div class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l4-4m0 0l4 4m-4-4v12"/>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">E-nose CSV</h3>
+                <p class="text-gray-600 mb-4">Upload a .csv of your E-nose</p>
+                <input type="file" name="enoseCSV" id="enoseCSV" accept=".csv" class="hidden" onchange="showFile(this, 'enoseFileName', 'enoseButton')">
+                <button id="enoseButton" type="button" onclick="document.getElementById('enoseCSV').click()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Choose File</button>
+                <p id="enoseFileName" class="mt-3 text-sm text-gray-500"></p>
+              </div>
+
+              <!-- Questionnaire CSV -->
+              <div class="upload-box border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center hover:border-blue-400 transition-colors">
+                <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l4-4m0 0l4 4m-4-4v12"/>
+                </svg>
+                <h3 class="text-xl font-semibold text-gray-900 mb-2">Questionnaire CSV</h3>
+                <p class="text-gray-600 mb-4">Upload a .csv of your questionnaire</p>
+                <input type="file" name="questionnaireCSV" id="questionnaireCSV" accept=".csv" class="hidden" onchange="showFile(this, 'questionnaireFileName', 'questionnaireButton')">
+                <button id="questionnaireButton" type="button" onclick="document.getElementById('questionnaireCSV').click()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700">Choose File</button>
+                <p id="questionnaireFileName" class="mt-3 text-sm text-gray-500"></p>
+              </div>
+            </div>
+
+            <div class="text-center mt-8">
+              <button type="button" onclick="nextStep(2)" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700">Next Step →</button>
+            </div>
+          </div>
+
+          <!-- Step 2 & Step 3 (unchanged placeholders) -->
+          <div id="step2" class="test-step hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Step 2: Health Questionnaire</h2>
+            <!-- (unchanged contents) -->
+          </div>
+
+          <div id="step3" class="test-step hidden">
+            <h2 class="text-3xl font-bold text-gray-900 mb-8">Step 3: Breath Data Upload</h2>
+            <!-- (unchanged contents) -->
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  function showFile(input, labelId, buttonId, previewId = null) {
+    const label = document.getElementById(labelId);
+    const button = document.getElementById(buttonId);
+    const preview = previewId ? document.getElementById(previewId) : null;
+
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      label.textContent = `✅ Uploaded: ${file.name}`;
+      label.classList.remove('text-gray-500');
+      label.classList.add('text-green-600', 'font-medium');
+      button.textContent = 'Uploaded ✓';
+      button.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'bg-purple-600', 'hover:bg-purple-700');
+      button.classList.add('bg-green-600', 'hover:bg-green-700');
+
+      if (preview && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = e => {
+          preview.src = e.target.result;
+          preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  }
+  </script>
+
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
