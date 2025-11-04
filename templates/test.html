@@ -48,8 +48,8 @@
       <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
         <form id="testForm" action="{{ url_for('analyze') }}" method="POST" enctype="multipart/form-data" class="p-12">
           <!-- Progress Bar -->
-          <div class="bg-gray-200 h-2 mb-8">
-            <div id="progress" class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600 h-2"></div>
+          <div class="bg-gray-200 h-2 mb-8 rounded-full">
+            <div id="progress" class="progress-bar bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 0%;"></div>
           </div>
 
           <!-- Step 1: Upload Files -->
@@ -116,15 +116,26 @@
             </div>
           </div>
 
-          <!-- Step 2 & Step 3 (unchanged placeholders) -->
+          <!-- Step 2 -->
           <div id="step2" class="test-step hidden">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Step 2: Health Questionnaire</h2>
-            <!-- (unchanged contents) -->
+            <p class="text-gray-600 mb-6">Example form or questionnaire section goes here.</p>
+
+            <div class="flex justify-between mt-8">
+              <button type="button" onclick="prevStep()" class="bg-gray-400 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-500">← Back</button>
+              <button type="button" onclick="nextStep(3)" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700">Next Step →</button>
+            </div>
           </div>
 
+          <!-- Step 3 -->
           <div id="step3" class="test-step hidden">
             <h2 class="text-3xl font-bold text-gray-900 mb-8">Step 3: Breath Data Upload</h2>
-            <!-- (unchanged contents) -->
+            <p class="text-gray-600 mb-6">Final data upload or confirmation step.</p>
+
+            <div class="flex justify-between mt-8">
+              <button type="button" onclick="prevStep()" class="bg-gray-400 text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-500">← Back</button>
+              <button type="submit" class="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700">Submit Test ✓</button>
+            </div>
           </div>
         </form>
       </div>
@@ -132,6 +143,7 @@
   </section>
 
   <script>
+  // ฟังก์ชันแสดงชื่อไฟล์และ Preview
   function showFile(input, labelId, buttonId, previewId = null) {
     const label = document.getElementById(labelId);
     const button = document.getElementById(buttonId);
@@ -154,6 +166,29 @@
         };
         reader.readAsDataURL(file);
       }
+    }
+  }
+
+  // ระบบเปลี่ยน Step
+  let currentStep = 1;
+
+  function nextStep(stepNumber) {
+    const steps = document.querySelectorAll('.test-step');
+    steps.forEach(step => step.classList.add('hidden'));
+
+    document.getElementById(`step${stepNumber}`).classList.remove('hidden');
+
+    const progress = document.getElementById('progress');
+    const stepCount = steps.length;
+    const progressWidth = ((stepNumber - 1) / (stepCount - 1)) * 100;
+    progress.style.width = `${progressWidth}%`;
+
+    currentStep = stepNumber;
+  }
+
+  function prevStep() {
+    if (currentStep > 1) {
+      nextStep(currentStep - 1);
     }
   }
   </script>
