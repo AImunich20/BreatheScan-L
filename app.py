@@ -33,10 +33,6 @@ def knowledge():
 def contact():
     return render_template("contact.html")
 
-
-# -------------------------------
-# TEST MODEL PAGE
-# -------------------------------
 @app.route("/test", methods=["GET", "POST"])
 def test():
     if request.method == "POST":

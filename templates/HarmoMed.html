@@ -29,8 +29,8 @@
           <a href="{{ url_for('about') }}" class="nav-link text-gray-700 hover:text-blue-600">About</a>
           <a href="{{ url_for('research') }}" class="nav-link text-gray-700 hover:text-blue-600">Research</a>
           <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
-          <a href="{{ url_for('test') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Test Model</a>
-          <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
+          <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
+          <a href="{{ url_for('HarmoMed') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">HarmoMed</a>
           <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
         </div>
       </div>
@@ -38,5 +38,27 @@
   </nav>
 
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script>
+  function openLoginModal() {
+    document.getElementById("loginModal").classList.remove("hidden");
+    document.getElementById("loginModal").classList.add("flex");
+  }
+
+  function closeLoginModal() {
+    document.getElementById("loginModal").classList.add("hidden");
+    document.getElementById("loginModal").classList.remove("flex");
+  }
+  </script>
+
+  <style>
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.25s ease-out;
+  }
+  </style>
+
 </body>
 </html>

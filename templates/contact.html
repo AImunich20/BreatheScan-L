@@ -33,10 +33,49 @@
           <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
                     <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
           <a href="{{ url_for('contact') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Contact</a>
+        <!-- 🔹 เพิ่มปุ่ม Login ในเมนู -->
+        <a href="#" onclick="openLoginModal()" class="nav-link text-gray-700 hover:text-blue-600">Login</a>
         </div>
       </div>
     </div>
   </nav>
+  <!-- 🔹 Login Popup Modal -->
+  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative animate-fadeIn">
+      <!-- Close Button -->
+      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
+        ✕
+      </button>
+      
+      <!-- Title -->
+      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
+      
+      <!-- Form -->
+      <form method="POST" action="/login">
+        <div class="mb-4">
+          <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
+          <input type="text" id="username" name="username" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <div class="mb-6">
+          <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+          <input type="password" id="password" name="password" required 
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+          Login
+        </button>
+
+        <p class="text-center text-sm text-gray-500 mt-4">
+          Don’t have an account? 
+          <a href="#" class="text-blue-600 hover:underline">Register</a>
+        </p>
+      </form>
+    </div>
+  </div>
     <section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16">
@@ -94,12 +133,12 @@
                         <div class="space-y-6">
                             <div class="flex items-center space-x-4">
                                 <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-lg">DR</span>
+                                    <span class="text-white font-bold text-lg">ST</span>
                                 </div>
                                 <div>
-                                    <h4 class="text-lg font-semibold text-gray-900">Dr. Sarah Chen</h4>
-                                    <p class="text-gray-600">Principal Investigator</p>
-                                    <p class="text-blue-600">sarah.chen@breathescan.org</p>
+                                    <h4 class="text-lg font-semibold text-gray-900">Natthanathron Wiwatsripaibool</h4>
+                                    <p class="text-gray-600">Programmer</p>
+                                    <p class="text-blue-600">natthanathron@gmail.com</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-4">
@@ -137,7 +176,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Email</h4>
-                                    <p class="text-gray-600">contact@breathescan.org</p>
+                                    <p class="text-gray-600">natthanathorn.wiw@pccpl.ac.th</p>
                                 </div>
                             </div>
                             <div class="flex items-center space-x-4">
@@ -160,7 +199,7 @@
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Address</h4>
-                                    <p class="text-gray-600">Medical Research Institute<br>Bangkok, Thailand</p>
+                                    <p class="text-gray-600">86 Moo.4 Makhamsung A.Meaung Phitsanulok 65000<br>🌐 Website: www.pccpl.ac.th<br>✉️ Email: pccpl@pccpl.ac.th<br>☎️ Phone: 055-245115</p>
                                 </div>
                             </div>
                         </div>
@@ -192,5 +231,27 @@
         </div>
     </section>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="assets/js/script.js"></script>
+  <script>
+  function openLoginModal() {
+    document.getElementById("loginModal").classList.remove("hidden");
+    document.getElementById("loginModal").classList.add("flex");
+  }
+
+  function closeLoginModal() {
+    document.getElementById("loginModal").classList.add("hidden");
+    document.getElementById("loginModal").classList.remove("flex");
+  }
+  </script>
+
+  <style>
+  @keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.95);}
+    to {opacity: 1; transform: scale(1);}
+  }
+  .animate-fadeIn {
+    animation: fadeIn 0.25s ease-out;
+  }
+  </style>
 </body>
 </html>
