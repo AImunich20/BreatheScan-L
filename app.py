@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import os
+from HarmoMed.HarmoMed import HarmoMed_lir
 
 app = Flask(__name__)
 app.secret_key = "breathe_secret_key"
