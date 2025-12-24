@@ -4,14 +4,45 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BreatheScan-L | Home</title>
-  <!-- Tailwind & Chart.js -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    /* Custom styles for Hero Section */
+    .gradient-bg {
+      /* Example gradient to simulate the original look */
+      background: linear-gradient(135deg, #e0f2fe 0%, #3c00cc 100%); 
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .tech-icon {
+      background: linear-gradient(45deg, #3b82f6, #8b5cf6);
+    }
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      50% { transform: translate(0, -15px); }
+      100% { transform: translate(0, 0); }
+    }
+    .float-animation {
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.25s ease-out;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+    }
+  </style>
 </head>
 <body class="bg-gray-50">
-  <!-- 🔹 Navigation -->
   <nav class="bg-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
@@ -27,91 +58,124 @@
           </div>
           <span class="text-xl font-bold text-gray-900">BreatheScan-L</span>
         </div>
-        <!-- Menu -->
-        <div class="hidden md:flex space-x-8">
-        <a href="{{ url_for('home') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Home</a>
-        <a href="{{ url_for('about') }}" class="nav-link text-gray-700 hover:text-blue-600">About</a>
-        <a href="{{ url_for('research') }}" class="nav-link text-gray-700 hover:text-blue-600">Research</a>
-        <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
-        <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
-        <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
-        <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
-        <!-- 🔹 เพิ่มปุ่ม Login ในเมนู -->
-        <a href="#" onclick="openLoginModal()" class="nav-link text-gray-700 hover:text-blue-600">Login</a>
+
+        <div class="hidden md:flex space-x-8 items-center">
+          <a href="{{ url_for('home') }}" class="text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Home</a>
+          <a href="{{ url_for('about') }}" class="text-gray-700 hover:text-blue-600">About</a>
+          <a href="{{ url_for('research') }}" class="text-gray-700 hover:text-blue-600">Research</a>
+          <a href="{{ url_for('knowledge') }}" class="text-gray-700 hover:text-blue-600">Knowledge</a>
+          <a href="{{ url_for('test') }}" class="text-gray-700 hover:text-blue-600">Test Model</a>
+          <a href="{{ url_for('HarmoMed') }}" class="text-gray-700 hover:text-blue-600">HarmoMed</a>
+          <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-blue-600">Contact</a>
+
+          <div id="userMenu" class="flex items-center space-x-3">
+            {% if user %}
+              <div class="flex items-center space-x-3">
+                <img src="/user_image/{{ user }}"
+                    class="w-10 h-10 rounded-full border border-gray-300"
+                    onerror="this.src='/static/default-avatar.png'">
+                <span class="font-semibold text-gray-800">{{ user }}</span>
+                <button onclick="logoutUser()"
+                        class="text-red-500 text-sm hover:underline">Logout</button>
+              </div>
+            {% else %}
+              <a href="#" onclick="openLoginModal()"
+                class="text-gray-700 hover:text-blue-600">Login</a>
+            {% endif %}
+          </div>
 
         </div>
-
       </div>
     </div>
   </nav>
-  <!-- 🔹 Login Popup Modal -->
+
   <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
     <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative animate-fadeIn">
-      <!-- Close Button -->
-      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">
-        ✕
-      </button>
-      
-      <!-- Title -->
+      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
       <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
-      
-      <!-- Form -->
-      <form method="POST" action="/login">
+      <form onsubmit="loginUser(event)">
         <div class="mb-4">
           <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
-          <input type="text" id="username" name="username" required 
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input type="text" id="login_username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
-
         <div class="mb-6">
           <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-          <input type="password" id="password" name="password" required 
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <input type="password" id="login_password" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
-
-        <button type="submit" 
-                class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
-          Login
-        </button>
-
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Login</button>
         <p class="text-center text-sm text-gray-500 mt-4">
           Don’t have an account? 
-          <a href="#" class="text-blue-600 hover:underline">Register</a>
+          <a href="#" onclick="openRegisterModal()" class="text-blue-600 hover:underline">Register</a>
         </p>
       </form>
     </div>
   </div>
 
-<!-- 🔹 Hero Section -->
-<section class="gradient-bg hero-pattern min-h-screen flex items-center">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid md:grid-cols-2 gap-12 items-center">
-      <!-- Left -->
-      <div class="text-indigo-900"> <!-- ← เปลี่ยนจาก text-white -->
-        <h1 class="text-5xl font-bold leading-tight mb-6">
-          AI-Powered Liver Disease Diagnosis
-        </h1>
-        <p class="text-xl text-indigo-800 mb-8">
-          Early detection through breath analysis, computer vision, and health assessment.
-        </p>
-        <a href="test.html"
-          class="bg-white text-blue-700 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-blue-50 transition">
-          Try Test Model
-        </a>
-      </div>
+  <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
+    <div class="bg-white rounded-2xl shadow-2xl w-[28rem] p-8 relative animate-fadeIn">
+      <button onclick="closeRegisterModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
+      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Register</h2>
+      <form id="registerForm" enctype="multipart/form-data">
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">First Name</label>
+            <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Last Name</label>
+            <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Email</label>
+          <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Phone</label>
+          <input type="text" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-medium mb-2">Profile Picture</label>
+          <input type="file" name="photo" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2">
+        </div>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Username</label>
+            <input type="text" name="username" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2">Password</label>
+            <input type="password" name="password" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Register</button>
+      </form>
+    </div>
+  </div>
+  
+  <section class="gradient-bg hero-pattern min-h-screen flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="text-indigo-900">
+          <h1 class="text-5xl font-bold leading-tight mb-6">
+            AI-Powered Liver Disease Diagnosis
+          </h1>
+          <p class="text-xl text-indigo-800 mb-8">
+            Early detection through breath analysis, computer vision, and health assessment.
+          </p>
+          <a href="{{ url_for('test') }}"
+             class="bg-white text-blue-700 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-blue-50 transition">
+            Try Test Model
+          </a>
+        </div>
 
-
-
-        <!-- Hero Visual -->
         <div class="relative float-animation">
           <div class="glass-effect rounded-3xl p-8">
-            <!-- AI Visualization -->
             <div class="grid grid-cols-2 gap-6 mb-8">
-              <!-- E-nose Sensor -->
               <div class="glass-effect rounded-2xl p-6 text-center">
                 <div class="w-16 h-16 tech-icon rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1
                              M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 
                              117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19
@@ -122,14 +186,13 @@
                 <h3 class="text-white font-semibold mb-2">E-nose Sensor</h3>
                 <p class="text-blue-100 text-sm">Breath Analysis</p>
               </div>
-              
-              <!-- Computer Vision -->
+
               <div class="glass-effect rounded-2xl p-6 text-center">
                 <div class="w-16 h-16 tech-icon rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M2.458 12C3.732 7.943 7.523 5 12 5
                              c4.478 0 8.268 2.943 9.542 7
                              -1.274 4.057-5.064 7-9.542 7
@@ -140,8 +203,7 @@
                 <p class="text-blue-100 text-sm">Image Analysis</p>
               </div>
             </div>
-            
-            <!-- Liver Icon -->
+
             <div class="text-center">
               <div class="w-24 h-24 bg-gradient-to-r from-red-400 to-pink-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -153,14 +215,11 @@
               <h3 class="text-white font-semibold mb-2">Liver Health Analysis</h3>
               <p class="text-blue-100">AI-powered diagnosis and risk assessment</p>
             </div>
-            
-            <!-- AI Processing Indicator -->
-            <div class="mt-8 flex justify-center">
-              <div class="flex space-x-2">
-                <div class="w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
-                <div class="w-3 h-3 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
-                <div class="w-3 h-3 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-              </div>
+
+            <div class="mt-8 flex justify-center space-x-2">
+              <div class="w-3 h-3 bg-blue-400 rounded-full animate-bounce"></div>
+              <div class="w-3 h-3 bg-purple-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+              <div class="w-3 h-3 bg-pink-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
             </div>
           </div>
         </div>
@@ -168,7 +227,6 @@
     </div>
   </section>
 
-  <!-- 🔹 Technology Overview -->
   <section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
@@ -177,9 +235,8 @@
           Combining cutting-edge AI with multiple diagnostic approaches for unprecedented accuracy
         </p>
       </div>
-      
+
       <div class="grid md:grid-cols-3 gap-8">
-        <!-- Breathomics -->
         <div class="card-hover bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
           <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,7 +250,6 @@
           <div class="text-blue-600 font-semibold">Non-invasive • Real-time • Accurate</div>
         </div>
         
-        <!-- Image Analysis -->
         <div class="card-hover bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
           <div class="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -211,7 +267,6 @@
           <div class="text-purple-600 font-semibold">AI-powered • Visual markers • Early detection</div>
         </div>
         
-        <!-- Health Questionnaire -->
         <div class="card-hover bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-8 border border-green-100">
           <div class="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,28 +286,79 @@
     </div>
   </section>
 
-  <script src="assets/js/script.js"></script>
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto text-center">
+      <p>&copy; 2025 BreatheScan-L. All rights reserved.</p>
+    </div>
+  </footer>
+
   <script>
+  /* ---------------- MODAL ---------------- */
   function openLoginModal() {
-    document.getElementById("loginModal").classList.remove("hidden");
-    document.getElementById("loginModal").classList.add("flex");
+    document.getElementById("loginModal").classList.replace("hidden", "flex");
+  }
+  function closeLoginModal() {
+    document.getElementById("loginModal").classList.replace("flex", "hidden");
+  }
+  function openRegisterModal() {
+    closeLoginModal();
+    document.getElementById("registerModal").classList.replace("hidden", "flex");
+  }
+  function closeRegisterModal() {
+    document.getElementById("registerModal").classList.replace("flex", "hidden");
   }
 
-  function closeLoginModal() {
-    document.getElementById("loginModal").classList.add("hidden");
-    document.getElementById("loginModal").classList.remove("flex");
+  /* ---------------- LOGIN ---------------- */
+  async function loginUser(event) {
+    event.preventDefault();
+
+    const username = document.getElementById("login_username").value;
+    const password = document.getElementById("login_password").value;
+
+    const res = await fetch("/login", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ username, password })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      closeLoginModal();
+      location.reload(); // 🔥 ให้ Flask session ทำงาน
+    } else {
+      alert(data.msg || "Login failed");
+    }
+  }
+
+  /* ---------------- REGISTER ---------------- */
+  document.getElementById("registerForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+
+    const res = await fetch("/register", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Register success! Please login.");
+      closeRegisterModal();
+      openLoginModal();
+    } else {
+      alert(data.msg || "Register failed");
+    }
+  });
+
+  /* ---------------- LOGOUT ---------------- */
+  function logoutUser() {
+    window.location.href = "/logout";
   }
   </script>
 
-  <style>
-  @keyframes fadeIn {
-    from {opacity: 0; transform: scale(0.95);}
-    to {opacity: 1; transform: scale(1);}
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out;
-  }
-  </style>
 
 </body>
 </html>
