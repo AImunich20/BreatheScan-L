@@ -1,59 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BreatheScan-L | About</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-      /* Custom styles for Hero Section */
-      .gradient-bg {
-        /* Example gradient to simulate the original look */
-        background: linear-gradient(135deg, #e0f2fe 0%, #3c00cc 100%); 
-      }
-      .glass-effect {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-      }
-      .tech-icon {
-        background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-      }
-      @keyframes float {
-        0% { transform: translate(0, 0); }
-        50% { transform: translate(0, -15px); }
-        100% { transform: translate(0, 0); }
-      }
-      .float-animation {
-        animation: float 4s ease-in-out infinite;
-      }
-      @keyframes fadeIn {
-        from {opacity: 0; transform: scale(0.95);}
-        to {opacity: 1; transform: scale(1);}
-      }
-      .animate-fadeIn {
-        animation: fadeIn 0.25s ease-out;
-      }
-      .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s ease;
-      }
-  </style>
 </head>
+
 <body class="bg-gray-50">
   <nav class="bg-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3
                        m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547
                        A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531
-                       c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                       c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
           <span class="text-xl font-bold text-gray-900">BreatheScan-L</span>
@@ -66,302 +33,193 @@
           <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
           <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
           <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
-          <a href="{{ url_for('contact') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Contact</a>
-          <div id="userMenu" class="relative">
-          {% if user %}
-            <button onclick="toggleUserDropdown()"
-                    class="flex items-center space-x-3 focus:outline-none">
-              <img src="/user_image/{{ user }}"
-                  class="w-10 h-10 rounded-full border border-gray-300"
-                  onerror="this.src='/static/default-avatar.png'">
-              <span class="font-semibold text-gray-800">{{ user }}</span>
-              <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M19 9l-7 7-7-7"/>
-              </svg>
-            </button>
-
-            <!-- Dropdown -->
-            <div id="userDropdown"
-                class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border z-50">
-              <a href="/profile"
-                class="block px-4 py-3 hover:bg-gray-100">👤 ข้อมูลส่วนตัว</a>
-              <a href="/history"
-                class="block px-4 py-3 hover:bg-gray-100">📜 ประวัติการตรวจ</a>
-              <a href="/settings"
-                class="block px-4 py-3 hover:bg-gray-100">⚙️ ตั้งค่า</a>
-              <hr>
-              <button onclick="logoutUser()"
-                      class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
-                🚪 Logout
-              </button>
-            </div>
-          {% else %}
-            <a href="#" onclick="openLoginModal()"
-              class="text-gray-700 hover:text-blue-600">Login</a>
-          {% endif %}
-          </div>
+          <a href="{{ url_for('contact') }}"
+            class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Contact</a>
+          <nav class="flex justify-end items-center p-4">
+            {% include "components/user_menu.html" %}
+          </nav>
 
         </div>
       </div>
     </div>
   </nav>
-  
-  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative animate-fadeIn">
-      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
-      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
-      <form onsubmit="loginUser(event)">
-        <div class="mb-4">
-          <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
-          <input type="text" id="login_username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-        <div class="mb-6">
-          <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-          <input type="password" id="login_password" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Login</button>
-        <p class="text-center text-sm text-gray-500 mt-4">
-          Don’t have an account? 
-          <a href="#" onclick="openRegisterModal()" class="text-blue-600 hover:underline">Register</a>
+
+  <section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">Contact Our Research Team</h1>
+        <p class="text-xl text-gray-600 max-w-4xl mx-auto">
+          Get in touch with our experts for collaboration, questions, or more information about BreatheScan-L
         </p>
-      </form>
-    </div>
-  </div>
+      </div>
 
-  <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-[28rem] p-8 relative animate-fadeIn">
-      <button onclick="closeRegisterModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
-      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Register</h2>
-      <form id="registerForm" enctype="multipart/form-data">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">First Name</label>
-            <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Last Name</label>
-            <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Email</label>
-          <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Phone</label>
-          <input type="text" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Profile Picture</label>
-          <input type="file" name="photo" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Username</label>
-            <input type="text" name="username" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Password</label>
-            <input type="password" name="password" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Register</button>
-      </form>
-    </div>
-  </div>
-    <section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h1 class="text-5xl font-bold text-gray-900 mb-6">Contact Our Research Team</h1>
-                <p class="text-xl text-gray-600 max-w-4xl mx-auto">
-                    Get in touch with our experts for collaboration, questions, or more information about BreatheScan-L
-                </p>
+      <div class="grid lg:grid-cols-2 gap-12">
+        <!-- Contact Form -->
+        <div class="bg-white rounded-3xl p-8 shadow-2xl">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
+          <form id="contactForm" class="space-y-6">
+            <div class="grid md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                <input type="text" id="firstName"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your first name">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                <input type="text" id="lastName"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="Enter your last name">
+              </div>
             </div>
-
-            <div class="grid lg:grid-cols-2 gap-12">
-                <!-- Contact Form -->
-                <div class="bg-white rounded-3xl p-8 shadow-2xl">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-                    <form id="contactForm" class="space-y-6">
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                                <input type="text" id="firstName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your first name">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                                <input type="text" id="lastName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your last name">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                            <input type="email" id="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-                            <select id="subject" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                                <option value="">Select a subject</option>
-                                <option value="collaboration">Research Collaboration</option>
-                                <option value="technical">Technical Questions</option>
-                                <option value="partnership">Partnership Inquiry</option>
-                                <option value="media">Media Inquiry</option>
-                                <option value="other">Other</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-                            <textarea id="message" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your message"></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all">
-                            Send Message
-                        </button>
-                    </form>
-                </div>
-
-                <!-- Contact Information -->
-                <div class="space-y-8">
-                    <!-- Research Team -->
-                    <div class="bg-white rounded-2xl p-8 shadow-lg">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Research Team</h3>
-                        <div class="space-y-6">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-lg">ST</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-gray-900">Natthanathron Wiwatsripaibool</h4>
-                                    <p class="text-gray-600">Programmer</p>
-                                    <p class="text-blue-600">natthanathron@gmail.com</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-lg">DR</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-gray-900">Dr. Michael Rodriguez</h4>
-                                    <p class="text-gray-600">AI Research Lead</p>
-                                    <p class="text-blue-600">michael.rodriguez@breathescan.org</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-lg">DR</span>
-                                </div>
-                                <div>
-                                    <h4 class="text-lg font-semibold text-gray-900">Dr. Emily Watson</h4>
-                                    <p class="text-gray-600">Clinical Research Director</p>
-                                    <p class="text-blue-600">emily.watson@breathescan.org</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Contact Methods -->
-                    <div class="bg-white rounded-2xl p-8 shadow-lg">
-                        <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Email</h4>
-                                    <p class="text-gray-600">natthanathorn.wiw@pccpl.ac.th</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Line Official Account</h4>
-                                    <p class="text-gray-600">@breathescan-l</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h4 class="font-semibold text-gray-900">Address</h4>
-                                    <p class="text-gray-600">86 Moo.4 Makhamsung A.Meaung Phitsanulok 65000<br>🌐 Website: www.pccpl.ac.th<br>✉️ Email: pccpl@pccpl.ac.th<br>☎️ Phone: 055-245115</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Office Hours -->
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-                        <h3 class="text-2xl font-bold mb-4">Office Hours</h3>
-                        <div class="space-y-2">
-                            <div class="flex justify-between">
-                                <span>Monday - Friday</span>
-                                <span>9:00 AM - 6:00 PM</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Saturday</span>
-                                <span>10:00 AM - 4:00 PM</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span>Sunday</span>
-                                <span>Closed</span>
-                            </div>
-                        </div>
-                        <p class="text-blue-100 text-sm mt-4">
-                            For urgent inquiries, please email us and we'll respond within 24 hours.
-                        </p>
-                    </div>
-                </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <input type="email" id="email"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your email">
             </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+              <select id="subject"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select a subject</option>
+                <option value="collaboration">Research Collaboration</option>
+                <option value="technical">Technical Questions</option>
+                <option value="partnership">Partnership Inquiry</option>
+                <option value="media">Media Inquiry</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+              <textarea id="message" rows="5"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter your message"></textarea>
+            </div>
+            <button type="submit"
+              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all">
+              Send Message
+            </button>
+          </form>
         </div>
-    </section>
+
+        <!-- Contact Information -->
+        <div class="space-y-8">
+          <!-- Research Team -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Research Team</h3>
+            <div class="space-y-6">
+              <div class="flex items-center space-x-4">
+                <div
+                  class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span class="text-white font-bold text-lg">ST</span>
+                </div>
+                <div>
+                  <h4 class="text-lg font-semibold text-gray-900">Natthanathron Wiwatsripaibool</h4>
+                  <p class="text-gray-600">Programmer</p>
+                  <p class="text-blue-600">natthanathron@gmail.com</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div
+                  class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                  <span class="text-white font-bold text-lg">DR</span>
+                </div>
+                <div>
+                  <h4 class="text-lg font-semibold text-gray-900">Dr. Michael Rodriguez</h4>
+                  <p class="text-gray-600">AI Research Lead</p>
+                  <p class="text-blue-600">michael.rodriguez@breathescan.org</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div
+                  class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                  <span class="text-white font-bold text-lg">DR</span>
+                </div>
+                <div>
+                  <h4 class="text-lg font-semibold text-gray-900">Dr. Emily Watson</h4>
+                  <p class="text-gray-600">Clinical Research Director</p>
+                  <p class="text-blue-600">emily.watson@breathescan.org</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Methods -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
+            <div class="space-y-4">
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                    </path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Email</h4>
+                  <p class="text-gray-600">natthanathorn.wiw@pccpl.ac.th</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                    </path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Line Official Account</h4>
+                  <p class="text-gray-600">@breathescan-l</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-gray-900">Address</h4>
+                  <p class="text-gray-600">86 Moo.4 Makhamsung A.Meaung Phitsanulok 65000<br>🌐 Website:
+                    www.pccpl.ac.th<br>✉️ Email: pccpl@pccpl.ac.th<br>☎️ Phone: 055-245115</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Office Hours -->
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
+            <h3 class="text-2xl font-bold mb-4">Office Hours</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between">
+                <span>Monday - Friday</span>
+                <span>9:00 AM - 6:00 PM</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Saturday</span>
+                <span>10:00 AM - 4:00 PM</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Sunday</span>
+                <span>Closed</span>
+              </div>
+            </div>
+            <p class="text-blue-100 text-sm mt-4">
+              For urgent inquiries, please email us and we'll respond within 24 hours.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
-    <script src="assets/js/script.js"></script>
-  <script>
-  function openLoginModal() {
-    document.getElementById("loginModal").classList.remove("hidden");
-    document.getElementById("loginModal").classList.add("flex");
-  }
-
-  function closeLoginModal() {
-    document.getElementById("loginModal").classList.add("hidden");
-    document.getElementById("loginModal").classList.remove("flex");
-  }
-  </script>
-
-  <style>
-  @keyframes fadeIn {
-    from {opacity: 0; transform: scale(0.95);}
-    to {opacity: 1; transform: scale(1);}
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.25s ease-out;
-  }
-  </style>
-    <script>
-    function toggleUserDropdown() {
-      const menu = document.getElementById("userDropdown");
-      menu.classList.toggle("hidden");
-    }
-
-    // ปิด popup เมื่อคลิกข้างนอก
-    document.addEventListener("click", function (e) {
-      const menu = document.getElementById("userDropdown");
-      const button = document.querySelector("#userMenu button");
-
-      if (menu && !menu.contains(e.target) && !button.contains(e.target)) {
-        menu.classList.add("hidden");
-      }
-    });
-  </script>
 </body>
+
 </html>

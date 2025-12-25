@@ -1,59 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BreatheScan-L | Home</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <style>
-    /* Custom styles for Hero Section */
-    .gradient-bg {
-      /* Example gradient to simulate the original look */
-      background: linear-gradient(135deg, #e0f2fe 0%, #3c00cc 100%); 
-    }
-    .glass-effect {
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .tech-icon {
-      background: linear-gradient(45deg, #3b82f6, #8b5cf6);
-    }
-    @keyframes float {
-      0% { transform: translate(0, 0); }
-      50% { transform: translate(0, -15px); }
-      100% { transform: translate(0, 0); }
-    }
-    .float-animation {
-      animation: float 4s ease-in-out infinite;
-    }
-    @keyframes fadeIn {
-      from {opacity: 0; transform: scale(0.95);}
-      to {opacity: 1; transform: scale(1);}
-    }
-    .animate-fadeIn {
-      animation: fadeIn 0.25s ease-out;
-    }
-    .card-hover:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      transition: all 0.3s ease;
-    }
-  </style>
 </head>
+
 <body class="bg-gray-50">
   <nav class="bg-white shadow-lg sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center h-16">
         <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+          <div
+            class="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3
                        m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547
                        A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531
-                       c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                       c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
           </div>
           <span class="text-xl font-bold text-gray-900">BreatheScan-L</span>
@@ -67,113 +34,15 @@
           <a href="{{ url_for('test') }}" class="text-gray-700 hover:text-blue-600">Test Model</a>
           <a href="{{ url_for('HarmoMed') }}" class="text-gray-700 hover:text-blue-600">HarmoMed</a>
           <a href="{{ url_for('contact') }}" class="text-gray-700 hover:text-blue-600">Contact</a>
-
-          <div id="userMenu" class="relative">
-          {% if user %}
-            <button onclick="toggleUserDropdown()"
-                    class="flex items-center space-x-3 focus:outline-none">
-              <img src="/user_image/{{ user }}"
-                  class="w-10 h-10 rounded-full border border-gray-300"
-                  onerror="this.src='/static/default-avatar.png'">
-              <span class="font-semibold text-gray-800">{{ user }}</span>
-              <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M19 9l-7 7-7-7"/>
-              </svg>
-            </button>
-
-            <!-- Dropdown -->
-            <div id="userDropdown"
-                class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border z-50">
-              <a href="/profile"
-                class="block px-4 py-3 hover:bg-gray-100">👤 ข้อมูลส่วนตัว</a>
-              <a href="/history"
-                class="block px-4 py-3 hover:bg-gray-100">📜 ประวัติการตรวจ</a>
-              <a href="/settings"
-                class="block px-4 py-3 hover:bg-gray-100">⚙️ ตั้งค่า</a>
-              <hr>
-              <button onclick="logoutUser()"
-                      class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
-                🚪 Logout
-              </button>
-            </div>
-          {% else %}
-            <a href="#" onclick="openLoginModal()"
-              class="text-gray-700 hover:text-blue-600">Login</a>
-          {% endif %}
-          </div>
-
-
-
+          <nav class="flex justify-end items-center p-4">
+            {% include "components/user_menu.html" %}
+          </nav>
         </div>
       </div>
     </div>
   </nav>
 
-  <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative animate-fadeIn">
-      <button onclick="closeLoginModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
-      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Login</h2>
-      <form onsubmit="loginUser(event)">
-        <div class="mb-4">
-          <label for="username" class="block text-gray-700 font-medium mb-2">Username</label>
-          <input type="text" id="login_username" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-        <div class="mb-6">
-          <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
-          <input type="password" id="login_password" required class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Login</button>
-        <p class="text-center text-sm text-gray-500 mt-4">
-          Don’t have an account? 
-          <a href="#" onclick="openRegisterModal()" class="text-blue-600 hover:underline">Register</a>
-        </p>
-      </form>
-    </div>
-  </div>
 
-  <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center z-50">
-    <div class="bg-white rounded-2xl shadow-2xl w-[28rem] p-8 relative animate-fadeIn">
-      <button onclick="closeRegisterModal()" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700">✕</button>
-      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">Register</h2>
-      <form id="registerForm" enctype="multipart/form-data">
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">First Name</label>
-            <input type="text" name="first_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Last Name</label>
-            <input type="text" name="last_name" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Email</label>
-          <input type="email" name="email" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Phone</label>
-          <input type="text" name="phone" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 font-medium mb-2">Profile Picture</label>
-          <input type="file" name="photo" accept="image/*" class="w-full border border-gray-300 rounded-lg px-4 py-2">
-        </div>
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Username</label>
-            <input type="text" name="username" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-          <div>
-            <label class="block text-gray-700 font-medium mb-2">Password</label>
-            <input type="password" name="password" required class="w-full border border-gray-300 rounded-lg px-4 py-2">
-          </div>
-        </div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">Register</button>
-      </form>
-    </div>
-  </div>
-  
   <section class="gradient-bg hero-pattern min-h-screen flex items-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid md:grid-cols-2 gap-12 items-center">
@@ -185,7 +54,7 @@
             Early detection through breath analysis, computer vision, and health assessment.
           </p>
           <a href="{{ url_for('test') }}"
-             class="bg-white text-blue-700 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-blue-50 transition">
+            class="bg-white text-blue-700 px-6 py-3 rounded-full font-semibold shadow-lg hover:bg-blue-50 transition">
             Try Test Model
           </a>
         </div>
@@ -196,12 +65,11 @@
               <div class="glass-effect rounded-2xl p-6 text-center">
                 <div class="w-16 h-16 tech-icon rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1
                              M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 
                              117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19
                              a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386
-                             l-.548-.547z"/>
+                             l-.548-.547z" />
                   </svg>
                 </div>
                 <h3 class="text-white font-semibold mb-2">E-nose Sensor</h3>
@@ -212,12 +80,11 @@
                 <div class="w-16 h-16 tech-icon rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5
                              c4.478 0 8.268 2.943 9.542 7
                              -1.274 4.057-5.064 7-9.542 7
-                             -4.477 0-8.268-2.943-9.542-7z"/>
+                             -4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </div>
                 <h3 class="text-white font-semibold mb-2">Computer Vision</h3>
@@ -226,11 +93,12 @@
             </div>
 
             <div class="text-center">
-              <div class="w-24 h-24 bg-gradient-to-r from-red-400 to-pink-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
+              <div
+                class="w-24 h-24 bg-gradient-to-r from-red-400 to-pink-400 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7
                            zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5
-                           2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                           2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
                 </svg>
               </div>
               <h3 class="text-white font-semibold mb-2">Liver Health Analysis</h3>
@@ -261,24 +129,24 @@
         <div class="card-hover bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 border border-blue-100">
           <div class="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-4">Breathomics (E-nose)</h3>
           <p class="text-gray-600 mb-6">
-            Advanced electronic nose sensors analyze volatile organic compounds in breath samples to detect liver disease biomarkers.
+            Advanced electronic nose sensors analyze volatile organic compounds in breath samples to detect liver
+            disease biomarkers.
           </p>
           <div class="text-blue-600 font-semibold">Non-invasive • Real-time • Accurate</div>
         </div>
-        
+
         <div class="card-hover bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-8 border border-purple-100">
           <div class="w-16 h-16 bg-purple-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2
                        l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12
                        a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12
-                       a2 2 0 002 2z"/>
+                       a2 2 0 002 2z" />
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-4">Image Analysis</h3>
@@ -287,14 +155,13 @@
           </p>
           <div class="text-purple-600 font-semibold">AI-powered • Visual markers • Early detection</div>
         </div>
-        
+
         <div class="card-hover bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-8 border border-green-100">
           <div class="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mb-6">
             <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 
                        012-2h5.586a1 1 0 01.707.293L19.707 8.707
-                       A1 1 0 0120 9.414V19a2 2 0 01-2 2z"/>
+                       A1 1 0 0120 9.414V19a2 2 0 01-2 2z" />
             </svg>
           </div>
           <h3 class="text-2xl font-bold text-gray-900 mb-4">Health Questionnaire</h3>
@@ -312,91 +179,8 @@
       <p>&copy; 2025 BreatheScan-L. All rights reserved.</p>
     </div>
   </footer>
-
-  <script>
-  /* ---------------- MODAL ---------------- */
-  function openLoginModal() {
-    document.getElementById("loginModal").classList.replace("hidden", "flex");
-  }
-  function closeLoginModal() {
-    document.getElementById("loginModal").classList.replace("flex", "hidden");
-  }
-  function openRegisterModal() {
-    closeLoginModal();
-    document.getElementById("registerModal").classList.replace("hidden", "flex");
-  }
-  function closeRegisterModal() {
-    document.getElementById("registerModal").classList.replace("flex", "hidden");
-  }
-
-  /* ---------------- LOGIN ---------------- */
-  async function loginUser(event) {
-    event.preventDefault();
-
-    const username = document.getElementById("login_username").value;
-    const password = document.getElementById("login_password").value;
-
-    const res = await fetch("/login", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ username, password })
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      closeLoginModal();
-      location.reload(); // 🔥 ให้ Flask session ทำงาน
-    } else {
-      alert(data.msg || "Login failed");
-    }
-  }
-
-  /* ---------------- REGISTER ---------------- */
-  document.getElementById("registerForm").addEventListener("submit", async e => {
-    e.preventDefault();
-
-    const formData = new FormData(e.target);
-
-    const res = await fetch("/register", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      alert("Register success! Please login.");
-      closeRegisterModal();
-      openLoginModal();
-    } else {
-      alert(data.msg || "Register failed");
-    }
-  });
-
-  /* ---------------- LOGOUT ---------------- */
-  function logoutUser() {
-    window.location.href = "/logout";
-  }
-  
-  </script>
-  <script>
-    function toggleUserDropdown() {
-      const menu = document.getElementById("userDropdown");
-      menu.classList.toggle("hidden");
-    }
-
-    // ปิด popup เมื่อคลิกข้างนอก
-    document.addEventListener("click", function (e) {
-      const menu = document.getElementById("userDropdown");
-      const button = document.querySelector("#userMenu button");
-
-      if (menu && !menu.contains(e.target) && !button.contains(e.target)) {
-        menu.classList.add("hidden");
-      }
-    });
-  </script>
-
-
+  <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
+
 </html>

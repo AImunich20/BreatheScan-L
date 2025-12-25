@@ -1,0 +1,77 @@
+<div id="userMenu" class="relative">
+    {% if user %}
+    <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 focus:outline-none">
+
+        <img src="/user_image/{{ user.username }}" class="w-10 h-10 rounded-full border border-gray-300"
+            onerror="this.src='/static/default-avatar.png'">
+
+        <span class="font-semibold text-gray-800">
+            {{ user.first_name }} {{ user.last_name }}
+        </span>
+
+        <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+    </button>
+
+    <!-- Dropdown -->
+    <div id="userDropdown" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border z-50">
+
+        <a href="#" onclick="openAccountPopup('profile')" class="block px-4 py-3 hover:bg-gray-100">
+            👤 Profile
+        </a>
+
+        <a href="#" onclick="openAccountPopup('history')" class="block px-4 py-3 hover:bg-gray-100">
+            📜 History
+        </a>
+
+        <a href="#" onclick="openAccountPopup('settings')" class="block px-4 py-3 hover:bg-gray-100">
+            ⚙️ Settings
+        </a>
+
+
+        {% if user.adminst %}
+        <hr>
+        <a href="/admin/dashboard" class="block px-4 py-3 text-blue-600 hover:bg-blue-50 font-semibold">
+            🛠 Admin Panel
+        </a>
+        {% endif %}
+
+        <hr>
+        <button onclick="logoutUser()" class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+            Logout
+        </button>
+    </div>
+
+    {% else %}
+    <a href="#" onclick="openLoginModal()" class="text-gray-700 hover:text-blue-600">
+        Login
+    </a>
+    {% endif %}
+</div>
+<!-- Account Popup -->
+<div id="accountPopup" class="hidden absolute right-56 top-0 w-80 bg-white rounded-xl shadow-2xl border z-50 p-5">
+
+    <div class="flex items-center space-x-4 mb-4">
+        <img src="/user_image/{{ user.username }}" class="w-14 h-14 rounded-full border"
+            onerror="this.src='/static/default-avatar.png'">
+
+        <div>
+            <p class="font-bold text-lg">
+                {{ user.first_name }} {{ user.last_name }}
+            </p>
+            <p class="text-sm text-gray-500">@{{ user.username }}</p>
+        </div>
+    </div>
+
+    <hr class="mb-3">
+
+    <!-- Dynamic Content -->
+    <div id="accountPopupContent" class="text-sm text-gray-700 space-y-2">
+        <!-- JS จะเปลี่ยนเนื้อหาตรงนี้ -->
+    </div>
+</div>
+
+<nav class="flex justify-end items-center p-4">
+    {% include "components/login.html" %}
+</nav>

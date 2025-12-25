@@ -1,4 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, send_from_directory
+from flask import (
+    Flask, render_template, request, redirect,
+    url_for, flash, session, jsonify, send_from_directory
+)
 import os, csv, json
 from HarmoMed.HarmoMed import HarmoMed_lir
 
@@ -17,38 +20,46 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 if not os.path.exists(USER_CSV):
     with open(USER_CSV, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["username","password","first_name","last_name","email","phone"])
+        writer.writerow([
+            "username", "password",
+            "first_name", "last_name",
+            "email", "phone"
+        ])
+
+# ---------------- GLOBAL USER ----------------
+@app.context_processor
+def inject_user():
+    return dict(user=session.get("user"))
 
 # ---------------- ROUTES ----------------
 @app.route("/")
 def home():
-    return render_template("home.html", user=session.get("user"))
+    return render_template("home.html")
 
 @app.route("/about")
 def about():
-    return render_template("about.html", user=session.get("user"))
+    return render_template("about.html")
 
 @app.route("/research")
 def research():
-    return render_template("research.html", user=session.get("user"))
+    return render_template("research.html")
 
 @app.route("/HarmoMed")
 def HarmoMed():
-    return render_template("HarmoMed.html", user=session.get("user"))
+    return render_template("HarmoMed.html")
 
 @app.route("/knowledge")
 def knowledge():
-    return render_template("knowledge.html", user=session.get("user"))
+    return render_template("knowledge.html")
 
 @app.route("/contact")
 def contact():
-    return render_template("contact.html", user=session.get("user"))
+    return render_template("contact.html")
 
 # ---------------- LOGIN ----------------
 @app.route("/login", methods=["POST"])
 def login():
     data = request.get_json(silent=True) or request.form
-
     username = data.get("username")
     password = data.get("password")
 
@@ -59,19 +70,37 @@ def login():
         reader = csv.DictReader(f)
         for row in reader:
             if row["username"] == username and row["password"] == password:
-                session["user"] = username
+
+                info_path = os.path.join(USER_DIR, username, "info.json")
+                if os.path.exists(info_path):
+                    with open(info_path, encoding="utf-8") as jf:
+                        user_info = json.load(jf)
+                else:
+                    user_info = dict(row)
+
+                # แปลง adminst เป็น boolean
+                user_info["adminst"] = user_info.get("adminst") == "True"
+
+                session["user"] = user_info
                 return jsonify(success=True)
 
     return jsonify(success=False, msg="Invalid username or password")
 
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.pop("user", None)
     return redirect(url_for("home"))
 
+# ---------------- USER IMAGE ----------------
 @app.route("/user_image/<username>")
 def user_image(username):
     user_path = os.path.join(USER_DIR, username)
+    image_path = os.path.join(user_path, "profile.jpg")
+
+    if not os.path.exists(image_path):
+        return send_from_directory("static", "default-avatar.png")
+
     return send_from_directory(user_path, "profile.jpg")
 
 # ---------------- REGISTER ----------------
@@ -79,13 +108,17 @@ def user_image(username):
 def register():
     data = request.form if request.form else request.get_json()
 
-    required = ["username","password","first_name","last_name","email","phone"]
+    required = [
+        "username", "password",
+        "first_name", "last_name",
+        "email", "phone"
+    ]
     if not all(k in data for k in required):
         return jsonify(success=False, msg="Incomplete data")
 
     username = data["username"]
 
-    # 🔍 check duplicate username
+    # check duplicate username
     with open(USER_CSV, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
@@ -100,7 +133,7 @@ def register():
     if photo and photo.filename:
         photo.save(os.path.join(user_path, "profile.jpg"))
 
-    # save user csv
+    # save csv
     with open(USER_CSV, "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -112,9 +145,12 @@ def register():
             data["phone"]
         ])
 
-    # save user info json
+    # save info.json (เพิ่ม adminst = False ค่าเริ่มต้น)
+    user_info = dict(data)
+    user_info.setdefault("adminst", "False")
+
     with open(os.path.join(user_path, "info.json"), "w", encoding="utf-8") as f:
-        json.dump(dict(data), f, indent=2, ensure_ascii=False)
+        json.dump(user_info, f, indent=2, ensure_ascii=False)
 
     return jsonify(success=True)
 
@@ -126,8 +162,14 @@ def test():
         return redirect(url_for("home"))
 
     if request.method == "POST":
-        file_keys = ["eyeImage", "skinImage", "enoseCSV", "questionnaireCSV", "breathData"]
-        user_upload = os.path.join(USER_DIR, session["user"], "uploads")
+        file_keys = [
+            "eyeImage", "skinImage",
+            "enoseCSV", "questionnaireCSV",
+            "breathData"
+        ]
+
+        username = session["user"]["username"]
+        user_upload = os.path.join(USER_DIR, username, "uploads")
         os.makedirs(user_upload, exist_ok=True)
 
         saved = False
@@ -141,11 +183,9 @@ def test():
             flash("Please upload files", "error")
             return redirect(url_for("test"))
 
-        # 🔬 AI Analysis (placeholder)
-        result = "AI Analysis Result: Low liver disease risk"
-        flash(result, "success")
+        flash("AI Analysis Result: Low liver disease risk", "success")
 
-    return render_template("test.html", user=session.get("user"))
+    return render_template("test.html")
 
 # ---------------- RUN ----------------
 if __name__ == "__main__":
