@@ -1,9 +1,25 @@
 {
+  "username": "admin",
   "first_name": "admin",
   "last_name": "admin",
   "email": "natthanathron@gmail.com",
   "phone": "0814829706",
-  "username": "admin",
-  "password": "2025",
-  "adminst": "True"
+  "medical": {
+    "age": "",
+    "gender": "",
+    "height_cm": "",
+    "weight_kg": "",
+    "blood_type": "",
+    "chronic_disease": "",
+    "allergy": "",
+    "note": ""
+  },
+  "adminst": false,
+  "age": "18",
+  "gender": "Male",
+  "height_cm": "178",
+  "weight_kg": "96",
+  "chronic_disease": "sd",
+  "allergy": "sd",
+  "note": "sd"
 }

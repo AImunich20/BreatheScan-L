@@ -3,10 +3,11 @@ from flask import (
     url_for, flash, session, jsonify, send_from_directory
 )
 import os, csv, json
+from werkzeug.security import generate_password_hash, check_password_hash
 from HarmoMed.HarmoMed import HarmoMed_lir
 
 app = Flask(__name__)
-app.secret_key = "breathe_secret_key"
+app.secret_key = "20"
 
 UPLOAD_FOLDER = "uploads"
 USER_CSV = "user.csv"
@@ -69,17 +70,27 @@ def login():
     with open(USER_CSV, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if row["username"] == username and row["password"] == password:
+            if row["username"] == username and check_password_hash(row["password"], password):
 
-                info_path = os.path.join(USER_DIR, username, "info.json")
+                user_path = os.path.join(USER_DIR, username)
+                info_path = os.path.join(user_path, "info.json")
+
                 if os.path.exists(info_path):
                     with open(info_path, encoding="utf-8") as jf:
                         user_info = json.load(jf)
                 else:
-                    user_info = dict(row)
+                    user_info = {
+                        "username": username,
+                        "first_name": row["first_name"],
+                        "last_name": row["last_name"],
+                        "email": row["email"],
+                        "phone": row["phone"],
+                        "medical": {},
+                        "adminst": False
+                    }
 
-                # แปลง adminst เป็น boolean
-                user_info["adminst"] = user_info.get("adminst") == "True"
+                # ensure boolean
+                user_info["adminst"] = bool(user_info.get("adminst", False))
 
                 session["user"] = user_info
                 return jsonify(success=True)
@@ -95,13 +106,12 @@ def logout():
 # ---------------- USER IMAGE ----------------
 @app.route("/user_image/<username>")
 def user_image(username):
-    user_path = os.path.join(USER_DIR, username)
-    image_path = os.path.join(user_path, "profile.jpg")
+    image_path = os.path.join(USER_DIR, username, "profile.jpg")
 
     if not os.path.exists(image_path):
         return send_from_directory("static", "default-avatar.png")
 
-    return send_from_directory(user_path, "profile.jpg")
+    return send_from_directory(os.path.join(USER_DIR, username), "profile.jpg")
 
 # ---------------- REGISTER ----------------
 @app.route("/register", methods=["POST"])
@@ -118,10 +128,9 @@ def register():
 
     username = data["username"]
 
-    # check duplicate username
+    # check duplicate
     with open(USER_CSV, newline="", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
+        for row in csv.DictReader(f):
             if row["username"] == username:
                 return jsonify(success=False, msg="Username already exists")
 
@@ -133,24 +142,84 @@ def register():
     if photo and photo.filename:
         photo.save(os.path.join(user_path, "profile.jpg"))
 
-    # save csv
+    # save csv (hash password)
+    hashed_pw = generate_password_hash(data["password"])
+
     with open(USER_CSV, "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([
             username,
-            data["password"],
+            hashed_pw,
             data["first_name"],
             data["last_name"],
             data["email"],
             data["phone"]
         ])
 
-    # save info.json (เพิ่ม adminst = False ค่าเริ่มต้น)
-    user_info = dict(data)
-    user_info.setdefault("adminst", "False")
+    # create info.json
+    info = {
+        "username": username,
+        "first_name": data["first_name"],
+        "last_name": data["last_name"],
+        "email": data["email"],
+        "phone": data["phone"],
+        "medical": {
+            "age": "",
+            "gender": "",
+            "height_cm": "",
+            "weight_kg": "",
+            "blood_type": "",
+            "chronic_disease": "",
+            "allergy": "",
+            "note": ""
+        },
+        "adminst": False
+    }
 
     with open(os.path.join(user_path, "info.json"), "w", encoding="utf-8") as f:
-        json.dump(user_info, f, indent=2, ensure_ascii=False)
+        json.dump(info, f, indent=2, ensure_ascii=False)
+
+    return jsonify(success=True)
+
+# ---------------- PROFILE API ----------------
+@app.route("/api/profile")
+def api_profile():
+    if "user" not in session:
+        return jsonify({}), 401
+
+    username = session["user"]["username"]
+    info_path = os.path.join(USER_DIR, username, "info.json")
+
+    if not os.path.exists(info_path):
+        return jsonify({})
+
+    with open(info_path, encoding="utf-8") as f:
+        return jsonify(json.load(f))
+
+@app.route("/api/profile/update", methods=["POST"])
+def update_profile():
+    if "user" not in session:
+        return jsonify(success=False, msg="not logged in"), 401
+
+    username = session["user"].get("username")
+    if not username:
+        return jsonify(success=False, msg="no username"), 400
+
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify(success=False, msg="invalid data"), 400
+
+    info_path = os.path.join(USER_DIR, username, "info.json")
+
+    info = {}
+    if os.path.exists(info_path):
+        with open(info_path, encoding="utf-8") as f:
+            info = json.load(f)
+
+    info.update(data)
+
+    with open(info_path, "w", encoding="utf-8") as f:
+        json.dump(info, f, indent=2, ensure_ascii=False)
 
     return jsonify(success=True)
 

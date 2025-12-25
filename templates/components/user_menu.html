@@ -1,4 +1,5 @@
 <div id="userMenu" class="relative">
+
     {% if user %}
     <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 focus:outline-none">
 
@@ -15,32 +16,136 @@
     </button>
 
     <!-- Dropdown -->
-    <div id="userDropdown" class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border z-50">
+    <div id="userDropdown" class="hidden absolute right-0 mt-3 w-52 bg-white
+                rounded-xl shadow-lg border z-50">
 
-        <a href="#" onclick="openAccountPopup('profile')" class="block px-4 py-3 hover:bg-gray-100">
+        <a href="#" onclick="event.preventDefault(); openAccountPopup('profile')"
+            class="block px-4 py-3 hover:bg-gray-100">
             👤 Profile
         </a>
 
-        <a href="#" onclick="openAccountPopup('history')" class="block px-4 py-3 hover:bg-gray-100">
-            📜 History
+        <a href="#" onclick="event.preventDefault(); openAccountPopup('history')"
+            class="block px-4 py-3 hover:bg-gray-100">
+            History
         </a>
 
-        <a href="#" onclick="openAccountPopup('settings')" class="block px-4 py-3 hover:bg-gray-100">
+        <a href="#" onclick="event.preventDefault(); openAccountPopup('settings')"
+            class="block px-4 py-3 hover:bg-gray-100">
             ⚙️ Settings
         </a>
 
-
         {% if user.adminst %}
         <hr>
-        <a href="/admin/dashboard" class="block px-4 py-3 text-blue-600 hover:bg-blue-50 font-semibold">
+        <a href="/admin/dashboard" class="block px-4 py-3 text-blue-600
+                  hover:bg-blue-50 font-semibold">
             🛠 Admin Panel
         </a>
         {% endif %}
 
         <hr>
-        <button onclick="logoutUser()" class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+        <button onclick="logoutUser()" class="w-full text-left px-4 py-3
+                       text-red-600 hover:bg-red-50">
             Logout
         </button>
+    </div>
+
+    <!-- Account Popup (ต้องอยู่ใน userMenu) -->
+    <div id="accountPopup" class="hidden absolute top-full right-0 mt-2 w-96
+                bg-white rounded-xl shadow-2xl
+                border z-50 p-5">
+
+        <div class="flex items-center space-x-4 mb-4">
+            <img src="/user_image/{{ user.username }}" class="w-14 h-14 rounded-full border"
+                onerror="this.src='/static/default-avatar.png'">
+
+            <div>
+                <p class="font-bold text-lg">
+                    {{ user.first_name }} {{ user.last_name }}
+                </p>
+                <p class="text-sm text-gray-500">
+                    @{{ user.username }}
+                </p>
+            </div>
+        </div>
+
+        <hr class="mb-3">
+
+        <div id="accountPopupContent" class="text-sm text-gray-700 space-y-3">
+
+            <form id="profileForm" class="space-y-3">
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-medium">First Name</label>
+                        <input name="first_name" class="w-full border rounded px-2 py-1">
+                    </div>
+                    <div>
+                        <label class="font-medium">Last Name</label>
+                        <input name="last_name" class="w-full border rounded px-2 py-1">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-medium">Email</label>
+                    <input name="email" class="w-full border rounded px-2 py-1">
+                </div>
+
+                <div>
+                    <label class="font-medium">Phone</label>
+                    <input name="phone" class="w-full border rounded px-2 py-1">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-medium">Age</label>
+                        <input name="age" type="number" class="w-full border rounded px-2 py-1">
+                    </div>
+                    <div>
+                        <label class="font-medium">Gender</label>
+                        <select name="gender" class="w-full border rounded px-2 py-1">
+                            <option value="">-</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="font-medium">Height (cm)</label>
+                        <input name="height_cm" type="number" class="w-full border rounded px-2 py-1">
+                    </div>
+                    <div>
+                        <label class="font-medium">Weight (kg)</label>
+                        <input name="weight_kg" type="number" class="w-full border rounded px-2 py-1">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="font-medium">Chronic Disease</label>
+                    <textarea name="chronic_disease" class="w-full border rounded px-2 py-1"></textarea>
+                </div>
+
+                <div>
+                    <label class="font-medium">Allergy</label>
+                    <textarea name="allergy" class="w-full border rounded px-2 py-1"></textarea>
+                </div>
+
+                <div>
+                    <label class="font-medium">Medical Note</label>
+                    <textarea name="note" class="w-full border rounded px-2 py-1"></textarea>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
+                    💾 Save Profile
+                </button>
+
+            </form>
+
+        </div>
+
     </div>
 
     {% else %}
@@ -48,28 +153,6 @@
         Login
     </a>
     {% endif %}
-</div>
-<!-- Account Popup -->
-<div id="accountPopup" class="hidden absolute right-56 top-0 w-80 bg-white rounded-xl shadow-2xl border z-50 p-5">
-
-    <div class="flex items-center space-x-4 mb-4">
-        <img src="/user_image/{{ user.username }}" class="w-14 h-14 rounded-full border"
-            onerror="this.src='/static/default-avatar.png'">
-
-        <div>
-            <p class="font-bold text-lg">
-                {{ user.first_name }} {{ user.last_name }}
-            </p>
-            <p class="text-sm text-gray-500">@{{ user.username }}</p>
-        </div>
-    </div>
-
-    <hr class="mb-3">
-
-    <!-- Dynamic Content -->
-    <div id="accountPopupContent" class="text-sm text-gray-700 space-y-2">
-        <!-- JS จะเปลี่ยนเนื้อหาตรงนี้ -->
-    </div>
 </div>
 
 <nav class="flex justify-end items-center p-4">
