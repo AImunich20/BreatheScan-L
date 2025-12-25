@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+    </header>
+
+    <!-- Content -->
+    <main class="p-6">
+
+        <!-- System Overview -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+            <div class="bg-white rounded-xl shadow p-4">
+                <p class="text-sm text-gray-500">CPU Usage</p>
+                <p id="cpuText" class="text-2xl font-bold text-blue-600">0%</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+                <p class="text-sm text-gray-500">RAM Usage</p>
+                <p id="ramText" class="text-2xl font-bold text-green-600">0%</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+                <p class="text-sm text-gray-500">Disk Usage</p>
+                <p id="diskText" class="text-2xl font-bold text-orange-600">0%</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-4">
+                <p class="text-sm text-gray-500">Network (MB)</p>
+                <p id="netText" class="text-2xl font-bold text-purple-600">0 / 0</p>
+            </div>
+
+        </div>
+
+        <!-- Charts -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <h2 class="font-semibold mb-3">CPU Usage (%)</h2>
+                <canvas id="cpuChart"></canvas>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <h2 class="font-semibold mb-3">RAM Usage (%)</h2>
+                <canvas id="ramChart"></canvas>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <h2 class="font-semibold mb-3">Disk Usage (%)</h2>
+                <canvas id="diskChart"></canvas>
+            </div>
+
+            <div class="bg-white p-5 rounded-xl shadow">
+                <h2 class="font-semibold mb-3">Network Traffic (MB)</h2>
+                <canvas id="netChart"></canvas>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+
+</html>

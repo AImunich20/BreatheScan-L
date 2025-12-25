@@ -5,6 +5,9 @@ from flask import (
 import os, csv, json
 from werkzeug.security import generate_password_hash, check_password_hash
 from HarmoMed.HarmoMed import HarmoMed_lir
+import psutil
+import time
+
 
 app = Flask(__name__)
 app.secret_key = "20"
@@ -26,6 +29,37 @@ if not os.path.exists(USER_CSV):
             "first_name", "last_name",
             "email", "phone"
         ])
+
+def admin_required():
+    return "user" in session and session["user"].get("adminst") is True
+
+@app.route("/admin/dashboard")
+def admin_dashboard():
+    if not admin_required():
+        return redirect(url_for("home"))
+    return render_template("admin_dashboard.html")
+@app.route("/api/admin/server_status")
+def server_status():
+    if not admin_required():
+        return jsonify(error="unauthorized"), 403
+
+    return jsonify({
+        "cpu": psutil.cpu_percent(interval=0.5),
+        "ram": {
+            "used": psutil.virtual_memory().used // (1024**2),
+            "total": psutil.virtual_memory().total // (1024**2),
+            "percent": psutil.virtual_memory().percent
+        },
+        "disk": {
+            "used": psutil.disk_usage("/").used // (1024**3),
+            "total": psutil.disk_usage("/").total // (1024**3),
+            "percent": psutil.disk_usage("/").percent
+        },
+        "net": {
+            "sent": psutil.net_io_counters().bytes_sent // (1024**2),
+            "recv": psutil.net_io_counters().bytes_recv // (1024**2)
+        }
+    })
 
 # ---------------- GLOBAL USER ----------------
 @app.context_processor

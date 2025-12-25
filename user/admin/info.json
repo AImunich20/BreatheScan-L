@@ -14,7 +14,7 @@
     "allergy": "",
     "note": ""
   },
-  "adminst": false,
+  "adminst": true,
   "age": "18",
   "gender": "Male",
   "height_cm": "178",

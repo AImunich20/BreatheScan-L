@@ -121,9 +121,9 @@ document.getElementById("profileForm").addEventListener("submit", function (e) {
         .then(res => res.json())
         .then(res => {
             if (res.success) {
-                alert("✅ Profile saved");
+                alert("Profile saved");
             } else {
-                alert("❌ " + res.msg);
+                alert("error" + res.msg);
             }
         });
 });
