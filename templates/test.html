@@ -61,28 +61,47 @@
 
         <div class="hidden md:flex space-x-8 items-center">
           <a href="{{ url_for('home') }}" class="nav-link text-gray-700 hover:text-blue-600">Home</a>
-          <a href="{{ url_for('about') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">About</a>
+          <a href="{{ url_for('about') }}" class="nav-link text-gray-700 hover:text-blue-600">About</a>
           <a href="{{ url_for('research') }}" class="nav-link text-gray-700 hover:text-blue-600">Research</a>
           <a href="{{ url_for('knowledge') }}" class="nav-link text-gray-700 hover:text-blue-600">Knowledge</a>
-          <a href="{{ url_for('test') }}" class="nav-link text-gray-700 hover:text-blue-600">Test Model</a>
+          <a href="{{ url_for('test') }}" class="nav-link text-blue-600 font-medium border-b-2 border-blue-600 pb-1">Test Model</a>
           <a href="{{ url_for('HarmoMed') }}" class="nav-link text-gray-700 hover:text-blue-600">HarmoMed</a>
           <a href="{{ url_for('contact') }}" class="nav-link text-gray-700 hover:text-blue-600">Contact</a>
-          <!-- 🔹 เพิ่มปุ่ม Login ในเมนู -->
-          <div id="userMenu" class="flex items-center space-x-3">
-            {% if user %}
-              <div class="flex items-center space-x-3">
-                <img src="/user_image/{{ user }}"
-                    class="w-10 h-10 rounded-full border border-gray-300"
-                    onerror="this.src='/static/default-avatar.png'">
-                <span class="font-semibold text-gray-800">{{ user }}</span>
-                <button onclick="logoutUser()"
-                        class="text-red-500 text-sm hover:underline">Logout</button>
-              </div>
-            {% else %}
-              <a href="#" onclick="openLoginModal()"
-                class="text-gray-700 hover:text-blue-600">Login</a>
-            {% endif %}
+          <div id="userMenu" class="relative">
+          {% if user %}
+            <button onclick="toggleUserDropdown()"
+                    class="flex items-center space-x-3 focus:outline-none">
+              <img src="/user_image/{{ user }}"
+                  class="w-10 h-10 rounded-full border border-gray-300"
+                  onerror="this.src='/static/default-avatar.png'">
+              <span class="font-semibold text-gray-800">{{ user }}</span>
+              <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M19 9l-7 7-7-7"/>
+              </svg>
+            </button>
+
+            <!-- Dropdown -->
+            <div id="userDropdown"
+                class="hidden absolute right-0 mt-3 w-52 bg-white rounded-xl shadow-lg border z-50">
+              <a href="/profile"
+                class="block px-4 py-3 hover:bg-gray-100">👤 ข้อมูลส่วนตัว</a>
+              <a href="/history"
+                class="block px-4 py-3 hover:bg-gray-100">📜 ประวัติการตรวจ</a>
+              <a href="/settings"
+                class="block px-4 py-3 hover:bg-gray-100">⚙️ ตั้งค่า</a>
+              <hr>
+              <button onclick="logoutUser()"
+                      class="w-full text-left px-4 py-3 text-red-600 hover:bg-red-50">
+                🚪 Logout
+              </button>
+            </div>
+          {% else %}
+            <a href="#" onclick="openLoginModal()"
+              class="text-gray-700 hover:text-blue-600">Login</a>
+          {% endif %}
           </div>
+
         </div>
       </div>
     </div>
@@ -288,6 +307,22 @@
   function prevStep() {
     if (currentStep > 1) nextStep(currentStep - 1);
   }
+  </script>
+    <script>
+    function toggleUserDropdown() {
+      const menu = document.getElementById("userDropdown");
+      menu.classList.toggle("hidden");
+    }
+
+    // ปิด popup เมื่อคลิกข้างนอก
+    document.addEventListener("click", function (e) {
+      const menu = document.getElementById("userDropdown");
+      const button = document.querySelector("#userMenu button");
+
+      if (menu && !menu.contains(e.target) && !button.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
   </script>
 </body>
 </html>
