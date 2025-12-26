@@ -4,16 +4,6 @@
   "last_name": "admin",
   "email": "natthanathron@gmail.com",
   "phone": "0814829706",
-  "medical": {
-    "age": "",
-    "gender": "",
-    "height_cm": "",
-    "weight_kg": "",
-    "blood_type": "",
-    "chronic_disease": "",
-    "allergy": "",
-    "note": ""
-  },
   "adminst": true,
   "age": "18",
   "gender": "Male",

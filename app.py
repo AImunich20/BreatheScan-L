@@ -197,16 +197,16 @@ def register():
         "last_name": data["last_name"],
         "email": data["email"],
         "phone": data["phone"],
-        "medical": {
-            "age": "",
-            "gender": "",
-            "height_cm": "",
-            "weight_kg": "",
-            "blood_type": "",
-            "chronic_disease": "",
-            "allergy": "",
-            "note": ""
-        },
+        # "medical": {
+        #     "age": "",
+        #     "gender": "",
+        #     "height_cm": "",
+        #     "weight_kg": "",
+        #     "blood_type": "",
+        #     "chronic_disease": "",
+        #     "allergy": "",
+        #     "note": ""
+        # },
         "adminst": False
     }
 
