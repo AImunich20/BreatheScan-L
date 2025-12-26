@@ -8,7 +8,6 @@ from HarmoMed.HarmoMed import HarmoMed_lir
 import psutil
 import time
 
-
 app = Flask(__name__)
 app.secret_key = "20"
 

@@ -1,17 +1,14 @@
 import os
 from werkzeug.datastructures import FileStorage
-
-# if __name__ == "__main__":
-    
-#     test_file_paths = ["output.jpg", "output.jpg", "output.jpg"]
-#     for path in test_file_paths:
-#         if os.path.exists(path):
-#             with open(path, "rb") as f:
-#                 uploaded_file = FileStorage(stream=f, filename=path)
-#                 run_image_processing_pipeline("wtest2.jpg", uploaded_file)
 import os
 from PIL import Image
 import pandas as pd
+from datetime import datetime
+import cv2
+import numpy as np
+import matplotlib.pyplot as plt
+import requests
+import os
 from datetime import datetime
 
 csv_file = "image_log.csv"
@@ -59,23 +56,6 @@ def save_uploaded_images(input_files, csv_file):
     print(f"เพิ่ม {len(input_files)} รูป: {', '.join(added_files)}")
     return len(input_files), added_files
 
-
-# if __name__ == "__main__":
-#     input_files = [
-#         "true_corrected_img_rgb1.jpg",
-#         "true_corrected_img_rgb1.jpg",
-#         "true_corrected_img_rgb1.jpg"
-#     ]
-#     try:
-#         file_count, added_files = save_uploaded_images(input_files, csv_file)
-#         print(added_files)
-
-import cv2
-import numpy as np
-import matplotlib.pyplot as plt
-import requests
-import os
-from datetime import datetime
 def detection(image_path):
     model_name = "indicator-j3riv"
     version = 4
@@ -302,8 +282,6 @@ def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image
         "plot": plot_path,
         "filename": new_filename
     }
-
-
 
 def HarmoMed_lir(target_img,reference_img):
     
