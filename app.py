@@ -4,9 +4,10 @@ from flask import (
 )
 import os, csv, json
 from werkzeug.security import generate_password_hash, check_password_hash
-from HarmoMed.HarmoMed import HarmoMed_lir
+from HarmoMed import HarmoMed_lir
 import psutil
 import time
+from Breathescan import Breathescan_L
 
 app = Flask(__name__)
 app.secret_key = "20"
