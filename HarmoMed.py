@@ -283,11 +283,53 @@ def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image
         "filename": new_filename
     }
 
-def HarmoMed_lir(target_img,reference_img):
-    
-    test_file_paths = target_img
-    for path in test_file_paths:
-        if os.path.exists(path):
-            with open(path, "rb") as f:
-                uploaded_file = FileStorage(stream=f, filename=path)
-                run_image_processing_pipeline(reference_img, uploaded_file)
+from werkzeug.datastructures import FileStorage
+
+def HarmoMed_lir(target_img, reference_img, output_path):
+    """
+    target_img    : list[str]  -> path ของภาพผิว + ตา
+    reference_img : str        -> path reference
+    output_path   : str        -> path output สุดท้าย
+    """
+
+    processed_images = []
+
+    for path in target_img:
+        if not os.path.exists(path):
+            continue
+
+        with open(path, "rb") as f:
+            uploaded_file = FileStorage(
+                stream=f,
+                filename=os.path.basename(path)
+            )
+
+            result = run_image_processing_pipeline(
+                reference_img,
+                uploaded_file
+            )
+
+            # ✅ ใช้ key ที่มีจริง
+            result_img_path = result.get("result_image")
+
+            if result_img_path and os.path.exists(result_img_path):
+                img = cv2.imread(result_img_path)
+                if img is not None:
+                    processed_images.append(img)
+
+    if len(processed_images) == 0:
+        raise ValueError("HarmoMed_lir: ไม่พบภาพผลลัพธ์จาก pipeline")
+
+    # 🔹 resize ให้ขนาดเท่ากันก่อน (กัน error)
+    base_h, base_w = processed_images[0].shape[:2]
+    resized_images = [
+        cv2.resize(img, (base_w, base_h))
+        for img in processed_images
+    ]
+
+    # 🔹 รวมภาพด้วยค่าเฉลี่ย
+    final_img = np.mean(resized_images, axis=0).astype(np.uint8)
+
+    cv2.imwrite(output_path, final_img)
+
+    return output_path

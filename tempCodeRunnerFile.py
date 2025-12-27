@@ -7,13 +7,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 import joblib
 import os
+
 from HarmoMed import HarmoMed_lir
 
-MODEL_VERSION = "1.1.0"
-MODEL_PATH = "risk_model.pkl"
-SCALER_PATH = "scaler.pkl"
-EXPECTED_FEATURE_DIM = 9
-EPS = 1e-6
+# ===============================
+# CONFIG
+# ===============================
 
 YELLOW_HSV_LOWER = np.array([18, 80, 80])
 YELLOW_HSV_UPPER = np.array([35, 255, 255])
@@ -25,11 +24,18 @@ STANDARD_SENSOR = {
     "MQ_138": 30
 }
 
+MODEL_PATH = "risk_model.pkl"
+SCALER_PATH = "scaler.pkl"
+
 FEATURE_NAMES = [
     "yellow_ratio", "h_mean", "s_mean", "v_mean",
     "MQ135_z", "MQ136_z", "MQ137_z", "MQ138_z",
     "questionnaire"
 ]
+
+# ===============================
+# DATA STRUCTURE
+# ===============================
 
 @dataclass
 class AnalysisResult:
@@ -38,8 +44,10 @@ class AnalysisResult:
     questionnaire_score: float
     risk_probability: float
     risk_level: str
-    model_version: str
-    risk_breakdown: dict
+
+# ===============================
+# IMAGE FEATURE EXTRACTION
+# ===============================
 
 def extract_image_features(image_path: str) -> List[float]:
     img = cv2.imread(image_path)
@@ -48,9 +56,10 @@ def extract_image_features(image_path: str) -> List[float]:
 
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
+
     mask = cv2.inRange(hsv, YELLOW_HSV_LOWER, YELLOW_HSV_UPPER)
 
-    yellow_ratio = np.count_nonzero(mask) / (mask.size + EPS)
+    yellow_ratio = np.count_nonzero(mask) / mask.size
     h_mean = np.mean(h[mask > 0]) if np.any(mask) else 0
     s_mean = np.mean(s[mask > 0]) if np.any(mask) else 0
     v_mean = np.mean(v[mask > 0]) if np.any(mask) else 0
@@ -61,6 +70,10 @@ def extract_image_features(image_path: str) -> List[float]:
         round(s_mean, 3),
         round(v_mean, 3)
     ]
+
+# ===============================
+# SENSOR FEATURE EXTRACTION
+# ===============================
 
 def extract_sensor_features(csv_path: str) -> List[float]:
     if not os.path.exists(csv_path):
@@ -74,18 +87,26 @@ def extract_sensor_features(csv_path: str) -> List[float]:
             raise ValueError(f"Missing sensor column: {sensor}")
 
         mean_val = df[sensor].mean()
-        z = (mean_val - ref) / (ref + EPS)
+        z = (mean_val - ref) / ref
         features.append(round(z, 3))
 
     return features
 
+# ===============================
+# QUESTIONNAIRE
+# ===============================
+
 def questionnaire_score(answers: List[int]) -> float:
     if len(answers) != 10:
-        raise ValueError("Questionnaire must have exactly 10 answers")
+        raise ValueError("Questionnaire must have 10 answers")
     if any(a < 0 or a > 4 for a in answers):
         raise ValueError("Answers must be between 0–4")
 
     return round(sum(answers) / 40, 3)
+
+# ===============================
+# RISK LABEL
+# ===============================
 
 def risk_label(prob: float) -> str:
     if prob < 0.30:
@@ -97,15 +118,13 @@ def risk_label(prob: float) -> str:
     else:
         return "Very high risk"
 
-def risk_breakdown(x: np.ndarray) -> dict:
-    return {
-        "image_risk": round(float(np.mean(x[:4]) / 100), 3),
-        "sensor_risk": round(float(np.mean(np.abs(x[4:8]))), 3),
-        "questionnaire_risk": round(float(x[8]), 3)
-    }
+# ===============================
+# SYNTHETIC MODEL TRAINING
+# ===============================
 
-def train_synthetic_model(n_samples: int = 800, seed: int = 42):
-    np.random.seed(seed)
+def train_synthetic_model(n_samples: int = 800):
+    np.random.seed(42)
+
     X, y = [], []
 
     for _ in range(n_samples):
@@ -149,6 +168,10 @@ def train_synthetic_model(n_samples: int = 800, seed: int = 42):
     joblib.dump(model, MODEL_PATH)
     joblib.dump(scaler, SCALER_PATH)
 
+# ===============================
+# MODEL LOADING
+# ===============================
+
 def load_model_and_scaler():
     if not os.path.exists(MODEL_PATH) or not os.path.exists(SCALER_PATH):
         train_synthetic_model()
@@ -157,20 +180,20 @@ def load_model_and_scaler():
     scaler = joblib.load(SCALER_PATH)
     return model, scaler
 
-def build_feature_vector(image_path, sensor_csv, answers) -> np.ndarray:
+# ===============================
+# FEATURE BUILDER
+# ===============================
+
+def build_feature_vector(image_path, sensor_csv, answers):
     img_feat = extract_image_features(image_path)
     sensor_feat = extract_sensor_features(sensor_csv)
     q_score = questionnaire_score(answers)
 
-    x = np.array(img_feat + sensor_feat + [q_score], dtype=np.float32)
+    return np.array(img_feat + sensor_feat + [q_score], dtype=np.float32)
 
-    if x.shape[0] != EXPECTED_FEATURE_DIM:
-        raise ValueError("Feature dimension mismatch")
-
-    if not np.isfinite(x).all():
-        raise ValueError("Feature contains NaN or Inf")
-
-    return x
+# ===============================
+# HARMOMED SAFE WRAPPER
+# ===============================
 
 def run_harmomed_safe(input_images, ref_image, out_path):
     result = HarmoMed_lir(input_images, ref_image, out_path)
@@ -183,27 +206,32 @@ def run_harmomed_safe(input_images, ref_image, out_path):
 
     return result
 
+# ===============================
+# MAIN AI SCREENING
+# ===============================
+
 def run_ai_screening(image_path, sensor_csv, questionnaire_answers) -> AnalysisResult:
-    x = build_feature_vector(image_path, sensor_csv, questionnaire_answers)
-    x = x.reshape(1, -1)
+    x = build_feature_vector(image_path, sensor_csv, questionnaire_answers).reshape(1, -1)
 
     model, scaler = load_model_and_scaler()
     x_scaled = scaler.transform(x)
 
     prob = float(model.predict_proba(x_scaled)[0, 1])
-    prob = np.clip(prob, 0, 1)
 
     return AnalysisResult(
         image_features=x[0][:4].tolist(),
         sensor_features=x[0][4:8].tolist(),
         questionnaire_score=float(x[0][8]),
         risk_probability=round(prob, 3),
-        risk_level=risk_label(prob),
-        model_version=MODEL_VERSION,
-        risk_breakdown=risk_breakdown(x[0])
+        risk_level=risk_label(prob)
     )
 
+# ===============================
+# ENTRY POINT
+# ===============================
+
 if __name__ == "__main__":
+
     processed_image = run_harmomed_safe(
         ["output.jpg"],
         "wtest2.jpg",
@@ -221,5 +249,3 @@ if __name__ == "__main__":
     print("Questionnaire score:", result.questionnaire_score)
     print("Risk probability:", result.risk_probability)
     print("Risk level:", result.risk_level)
-    print("Model version:", result.model_version)
-    print("Risk breakdown:", result.risk_breakdown)
