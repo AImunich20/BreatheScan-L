@@ -1,16 +1,3 @@
-"""
-AI Multimodal Risk Screening System
-----------------------------------
-Image + Sensor (E-nose) + Questionnaire
-Designed for medical AI prototype (BreatheScan-L ready)
-
-Author: Mint 🤍
-Version: 2.0.0
-"""
-
-# =========================
-# Imports
-# =========================
 import cv2
 import os
 import joblib
@@ -22,6 +9,7 @@ from dataclasses import dataclass
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from HarmoMed import HarmoMed_lir
+import json
 
 logging.basicConfig(
     level=logging.INFO,
@@ -285,15 +273,24 @@ def run_ai_screening(
 
 #     print(result)
 
-def Breathescan_L(input_img,path_img,sensor,ans):
+def Breathescan_L(input_img, path_img, sensor, ans, result_dir):
+    os.makedirs(result_dir, exist_ok=True)
+
     processed_image = run_harmomed_safe(
         [input_img],
         "wtest2.jpg",
         path_img
     )
+
     result = run_ai_screening(
         processed_image,
         sensor,
         ans
     )
-    print(result)
+
+    # บันทึกผลเป็นไฟล์ JSON
+    result_path = os.path.join(result_dir, "analysis_result.json")
+    with open(result_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=4)
+
+    return result

@@ -121,127 +121,164 @@
       </div>
     </div>
   </section>
-
-  <!-- 🔹 Prevention & Care -->
-  <section class="py-20 bg-gradient-to-br from-blue-50 to-green-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12">
-
-      <h3 class="text-2x
-      <!-- Prevention -->
-      <div class=" bg-white rounded-3xl p-8 shadow-lg">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6">Prevention Strategies</h3>
-        <ul class="space-y-4 text-gray-700">
-          <li>✅ Maintain Healthy Weight</li>
-          <li>✅ Limit Alcohol Consumption</li>
-          <li>✅ Get Vaccinated (Hepatitis A & B)</li>
-          <li>✅ Regular Screening & Checkups</li>
-        </ul>
-    </div>
-
-    <!-- Foods -->
-    <div class="bg-white rounded-3xl p-8 shadow-lg">
-      <h3 class="text-2xl font-bold text-gray-900 mb-6">Liver-Friendly Foods</h3>
-      <div class="grid grid-cols-2 gap-4">
-        <div class="p-4 text-center bg-green-50 rounded-xl">🥬 Leafy Greens</div>
-        <div class="p-4 text-center bg-blue-50 rounded-xl">🐟 Fatty Fish</div>
-        <div class="p-4 text-center bg-purple-50 rounded-xl">🫐 Berries</div>
-        <div class="p-4 text-center bg-yellow-50 rounded-xl">🥜 Nuts</div>
-      </div>
-    </div>
-    </div>
-  </section>
-
+  <!-- Questionnaire -->
   <section class="py-20 bg-white">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 bg-white rounded-3xl p-10 shadow-2xl">
-      <h2 class="text-3xl font-bold text-gray-900 text-center mb-8">Test Your Knowledge</h2>
-      <form id="quizForm">
-        <!-- Age -->
-        <div class="mb-6">
-          <label class="block text-gray-700 font-medium mb-2">Age:</label>
-          <input type="number" name="age" class="w-full p-3 border border-gray-300 rounded-lg"
-            placeholder="Enter your age" required>
+    <div class="max-w-4xl mx-auto bg-white rounded-3xl p-10 shadow-2xl">
+      <h2 class="text-3xl font-bold text-center mb-10">
+        Liver & Breath-Based Medical Questionnaire
+      </h2>
+
+      <form id="quizForm" class="space-y-6">
+
+        <!-- Q1 Alcohol -->
+        <div>
+          <label class="font-medium">
+            1. ความถี่ในการดื่มแอลกอฮอล์
+          </label>
+          <select name="alcohol" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="none">ไม่ดื่ม</option>
+            <option value="rare">นาน ๆ ครั้ง</option>
+            <option value="moderate">1–2 ครั้ง/สัปดาห์</option>
+            <option value="frequent">3+ ครั้ง/สัปดาห์</option>
+            <option value="daily">ทุกวัน</option>
+          </select>
         </div>
 
-        <h3 class="text-2x
-        <!-- Gender -->
-        <div class=" mb-6">
-          <label class="block text-gray-700 font-medium mb-2">Gender:</label>
-          <select name="gender" class="w-full p-3 border border-gray-300 rounded-lg" required>
-            <option value="">Select gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
+        <!-- Q2 Fatty food -->
+        <div>
+          <label class="font-medium">
+            2. การบริโภคอาหารไขมันสูง / ของทอด
+          </label>
+          <select name="fat_food" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="low">น้อย</option>
+            <option value="medium">ปานกลาง</option>
+            <option value="high">สูง</option>
           </select>
-    </div>
+        </div>
 
-    <!-- Alcohol -->
-    <div class="mb-6">
-      <label class="block text-gray-700 font-medium mb-2">Alcohol Consumption:</label>
-      <select name="alcohol" class="w-full p-3 border border-gray-300 rounded-lg" required>
-        <option value="">Select frequency</option>
-        <option value="never">Never</option>
-        <option value="rarely">Rarely (1-2 times/month)</option>
-        <option value="moderate">Moderate (1-2 times/week)</option>
-        <option value="frequent">Frequent (3+ times/week)</option>
-        <option value="daily">Daily</option>
-      </select>
-    </div>
+        <!-- Q3 Sulfur food -->
+        <div>
+          <label class="font-medium">
+            3. การบริโภคอาหารที่มีสารกำมะถันสูง (กระเทียม หอม กะหล่ำ)
+          </label>
+          <select name="sulfur_food" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="none">ไม่กิน</option>
+            <option value="low">น้อย</option>
+            <option value="medium">ปานกลาง</option>
+            <option value="high">บ่อย</option>
+          </select>
+        </div>
 
-    <!-- Sleep -->
-    <div class="mb-6">
-      <label class="block text-gray-700 font-medium mb-2">Sleep Quality:</label>
-      <select name="sleep" class="w-full p-3 border border-gray-300 rounded-lg" required>
-        <option value="">Select sleep quality</option>
-        <option value="excellent">Excellent (7-9 hours, restful)</option>
-        <option value="good">Good (6-8 hours, mostly restful)</option>
-        <option value="fair">Fair (5-7 hours, sometimes restless)</option>
-        <option value="poor">Poor (less than 5 hours or very restless)</option>
-      </select>
-    </div>
+        <!-- Q4 Sugar -->
+        <div>
+          <label class="font-medium">
+            4. การดื่มน้ำหวาน / น้ำอัดลม (ฟรุกโตสสูง)
+          </label>
+          <select name="fructose" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="low">น้อย</option>
+            <option value="medium">ปานกลาง</option>
+            <option value="high">สูง</option>
+          </select>
+        </div>
 
-    <!-- Exercise -->
-    <div class="mb-6">
-      <label class="block text-gray-700 font-medium mb-2">Exercise Frequency:</label>
-      <select name="exercise" class="w-full p-3 border border-gray-300 rounded-lg" required>
-        <option value="">Select exercise frequency</option>
-        <option value="daily">Daily</option>
-        <option value="regular">3-5 times per week</option>
-        <option value="occasional">1-2 times per week</option>
-        <option value="rarely">Rarely</option>
-        <option value="never">Never</option>
-      </select>
-    </div>
+        <!-- Q5 Jaundice -->
+        <div>
+          <label class="font-medium">
+            5. ผิวหนังหรือดวงตาเหลือง (ดีซ่าน)
+          </label>
+          <select name="jaundice" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="no">ไม่เคย</option>
+            <option value="sometimes">บางครั้ง</option>
+            <option value="yes">เป็นชัดเจน</option>
+          </select>
+        </div>
 
-    <!-- Medical History -->
-    <div class="mb-6">
-      <label class="block text-gray-700 font-medium mb-2">Medical History:</label>
-      <div class="space-y-2">
-        <label class="flex items-center">
-          <input type="checkbox" name="diabetes" class="mr-2">
-          <span>Diabetes</span>
-        </label>
-        <label class="flex items-center">
-          <input type="checkbox" name="obesity" class="mr-2">
-          <span>Obesity (BMI > 30)</span>
-        </label>
-        <label class="flex items-center">
-          <input type="checkbox" name="hepatitis" class="mr-2">
-          <span>Previous hepatitis infection</span>
-        </label>
-        <label class="flex items-center">
-          <input type="checkbox" name="family_history" class="mr-2">
-          <span>Family history of liver disease</span>
-        </label>
-      </div>
-    </div>
+        <!-- Q6 Orange food -->
+        <div>
+          <label class="font-medium">
+            6. การกินอาหารสีส้ม (ฟักทอง แครอท) ปริมาณมาก
+          </label>
+          <select name="carotene_food" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="low">น้อย</option>
+            <option value="medium">ปานกลาง</option>
+            <option value="high">มาก</option>
+          </select>
+        </div>
 
-    <div class="text-center">
-      <button type="button" onclick="exportCSV()"
-        class="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-        Export to CSV
-      </button>
-    </div>
-    </form>
+        <!-- Q7 Breath odor -->
+        <div>
+          <label class="font-medium">
+            7. กลิ่นลมหายใจผิดปกติ (หวาน / เหม็น / คล้ายกำมะถัน)
+          </label>
+          <select name="breath_odor" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="none">ไม่เคย</option>
+            <option value="sometimes">บางครั้ง</option>
+            <option value="often">บ่อย</option>
+          </select>
+        </div>
+
+        <!-- Q8 Abdominal -->
+        <div>
+          <label class="font-medium">
+            8. แน่นท้อง / ปวดชายโครงขวา
+          </label>
+          <select name="abdominal_pain" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="no">ไม่เคย</option>
+            <option value="sometimes">บางครั้ง</option>
+            <option value="often">บ่อย</option>
+          </select>
+        </div>
+
+        <!-- Q9 Fatigue -->
+        <div>
+          <label class="font-medium">
+            9. อ่อนเพลีย เหนื่อยง่ายผิดปกติ
+          </label>
+          <select name="fatigue" class="w-full p-3 border rounded-lg" required>
+            <option value="">เลือก</option>
+            <option value="no">ไม่เคย</option>
+            <option value="sometimes">บางครั้ง</option>
+            <option value="often">บ่อย</option>
+          </select>
+        </div>
+
+        <!-- Q10 Medical history -->
+        <div>
+          <label class="font-medium">
+            10. ประวัติทางการแพทย์ที่เกี่ยวข้องกับตับ
+          </label>
+          <div class="space-y-2 mt-2">
+            <label class="flex items-center">
+              <input type="checkbox" name="diabetes" class="mr-2"> เบาหวาน
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" name="fatty_liver" class="mr-2"> ไขมันพอกตับ
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" name="hepatitis" class="mr-2"> ไวรัสตับอักเสบ
+            </label>
+            <label class="flex items-center">
+              <input type="checkbox" name="family_history" class="mr-2"> ประวัติครอบครัวโรคตับ
+            </label>
+          </div>
+        </div>
+
+        <div class="text-center pt-6">
+          <button type="button" onclick="exportCSV()"
+            class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700">
+            SAVE
+          </button>
+        </div>
+
+      </form>
     </div>
   </section>
 
@@ -249,38 +286,23 @@
     function exportCSV() {
       const form = document.getElementById("quizForm");
       const formData = new FormData(form);
-      const csvRows = [];
 
-      // Header
-      const headers = [];
-      for (let pair of formData.entries()) {
-        headers.push(pair[0]);
-      }
-      csvRows.push(headers.join(","));
-
-      // Data
-      const values = [];
-      for (let pair of formData.entries()) {
-        values.push(pair[1] === "on" ? "Yes" : pair[1]); // checkbox = Yes
-      }
-      csvRows.push(values.join(","));
-
-      // สร้าง Blob CSV
-      const csvString = csvRows.join("\n");
-      const blob = new Blob([csvString], { type: "text/csv" });
-      const url = URL.createObjectURL(blob);
-
-      // ดาวน์โหลด CSV
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "quiz_data.csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      fetch("/api/knowledge/save_qs", {
+        method: "POST",
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert("บันทึกแบบสอบถามเรียบร้อยแล้ว");
+          } else {
+            alert(data.msg || "เกิดข้อผิดพลาด");
+          }
+        });
     }
   </script>
-  <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
 </body>
 
 </html>

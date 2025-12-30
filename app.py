@@ -266,27 +266,59 @@ def test():
 
     if request.method == "POST":
         file_keys = [
-            "eyeImage", "skinImage",
-            "enoseCSV", "questionnaireCSV",
+            "eyeImage",
+            "skinImage",
+            "enoseCSV",
+            "questionnaireCSV",
             "breathData"
         ]
 
         username = session["user"]["username"]
-        user_upload = os.path.join(USER_DIR, username, "uploads")
-        os.makedirs(user_upload, exist_ok=True)
 
-        saved = False
+        base_user_dir = os.path.join(USER_DIR, username)
+        upload_dir = os.path.join(base_user_dir, "uploads")
+        result_dir = os.path.join(base_user_dir, "result")
+
+        os.makedirs(upload_dir, exist_ok=True)
+        os.makedirs(result_dir, exist_ok=True)
+
+        saved_files = {}
+
         for key in file_keys:
             f = request.files.get(key)
             if f and f.filename:
-                f.save(os.path.join(user_upload, f.filename))
-                saved = True
+                save_path = os.path.join(upload_dir, f.filename)
+                f.save(save_path)
+                saved_files[key] = save_path
 
-        if not saved:
+        if not saved_files:
             flash("Please upload files", "error")
             return redirect(url_for("test"))
 
-        flash("AI Analysis Result: Low liver disease risk", "success")
+        # ----------------------------
+        # เตรียม input ให้ Breathescan_L
+        # ----------------------------
+        input_img = saved_files.get("eyeImage")
+        path_img = upload_dir
+
+        sensor = saved_files.get("enoseCSV")
+        ans = saved_files.get("questionnaireCSV")
+
+        # เรียก AI Pipeline
+        result = Breathescan_L(
+            input_img=input_img,
+            path_img=path_img,
+            sensor=sensor,
+            ans=ans,
+            result_dir=result_dir
+        )
+
+        flash("AI Analysis completed successfully", "success")
+
+        return render_template(
+            "test.html",
+            result=result
+        )
 
     return render_template("test.html")
 

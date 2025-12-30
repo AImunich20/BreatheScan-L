@@ -1,0 +1,15 @@
+{
+  "username": "20",
+  "first_name": "user",
+  "last_name": "user",
+  "email": "natthanathron@gmail.com",
+  "phone": "0814829706",
+  "adminst": false,
+  "age": "20",
+  "gender": "Male",
+  "height_cm": "178",
+  "weight_kg": "40",
+  "chronic_disease": "jj",
+  "allergy": "dd",
+  "note": "dd"
+}
