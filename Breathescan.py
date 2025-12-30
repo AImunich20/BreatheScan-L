@@ -4,19 +4,21 @@ import joblib
 import numpy as np
 import pandas as pd
 import logging
-from typing import List, Dict, Tuple
+import json
+from typing import List, Dict
 from dataclasses import dataclass
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from HarmoMed import HarmoMed_lir
-import json
 
+# ================= LOGGING =================
 logging.basicConfig(
     level=logging.INFO,
     format="[%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
 
+# ================= CONSTANTS =================
 MODEL_VERSION = "2.0.0"
 MODEL_PATH = "risk_model.pkl"
 SCALER_PATH = "scaler.pkl"
@@ -46,6 +48,28 @@ FEATURE_NAMES = [
     "questionnaire"
 ]
 
+# ================= QUESTIONNAIRE CONFIG =================
+QS_COLUMNS = [
+    "alcohol",
+    "fat_food",
+    "sulfur_food",
+    "fructose",
+    "jaundice",
+    "carotene_food",
+    "breath_odor",
+    "abdominal_pain",
+    "fatigue",
+    "diabetes"
+]
+
+QS_MAP = {
+    "no": 0, "never": 0, "none": 0, "low": 0,
+    "sometimes": 2, "medium": 2,
+    "yes": 4, "often": 4, "high": 4, "daily": 4,
+    0: 0, 1: 4, 2: 2, 3: 3, 4: 4
+}
+
+# ================= DATA CLASS =================
 @dataclass
 class AnalysisResult:
     image_features: List[float]
@@ -56,10 +80,8 @@ class AnalysisResult:
     model_version: str
     risk_breakdown: Dict[str, float]
 
+# ================= IMAGE FEATURES =================
 def extract_image_features(image_path: str) -> List[float]:
-    """
-    Extract jaundice-related features from image
-    """
     if not os.path.exists(image_path):
         raise FileNotFoundError(image_path)
 
@@ -68,7 +90,6 @@ def extract_image_features(image_path: str) -> List[float]:
     h, s, v = cv2.split(hsv)
 
     mask = cv2.inRange(hsv, YELLOW_HSV_LOWER, YELLOW_HSV_UPPER)
-
     yellow_ratio = np.count_nonzero(mask) / (mask.size + EPS)
 
     if np.any(mask):
@@ -85,10 +106,8 @@ def extract_image_features(image_path: str) -> List[float]:
         round(v_mean, 3)
     ]
 
+# ================= SENSOR FEATURES =================
 def extract_sensor_features(csv_path: str) -> List[float]:
-    """
-    Z-normalize sensor readings relative to healthy baseline
-    """
     if not os.path.exists(csv_path):
         raise FileNotFoundError(csv_path)
 
@@ -100,16 +119,35 @@ def extract_sensor_features(csv_path: str) -> List[float]:
             raise ValueError(f"Missing sensor: {sensor}")
 
         mean_val = df[sensor].mean()
-        z_score = (mean_val - ref) / (ref + EPS)
-        features.append(round(z_score, 3))
+        z = (mean_val - ref) / (ref + EPS)
+        features.append(round(z, 3))
 
     return features
 
+# ================= QUESTIONNAIRE =================
+def load_questionnaire_answers(csv_path: str) -> List[int]:
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(csv_path)
+
+    df = pd.read_csv(csv_path)
+    df = df[QS_COLUMNS]
+    row = df.iloc[0]
+
+    answers = []
+    for v in row:
+        if pd.isna(v):
+            answers.append(0)
+        else:
+            answers.append(int(QS_MAP.get(str(v).lower(), 0)))
+
+    if len(answers) != 10:
+        raise ValueError(
+            f"Questionnaire must have 10 answers, got {len(answers)}"
+        )
+
+    return answers
+
 def questionnaire_score(answers: List[int]) -> float:
-    """
-    10 questions, each scored 0–4
-    Output normalized 0–1
-    """
     if len(answers) != 10:
         raise ValueError("Questionnaire must have 10 answers")
 
@@ -118,6 +156,7 @@ def questionnaire_score(answers: List[int]) -> float:
 
     return round(sum(answers) / 40.0, 3)
 
+# ================= MODEL =================
 def risk_label(prob: float) -> str:
     if prob < 0.30:
         return "Low risk"
@@ -129,30 +168,19 @@ def risk_label(prob: float) -> str:
         return "Very high risk"
 
 def risk_breakdown(x: np.ndarray) -> Dict[str, float]:
-    """
-    Explainability (simple heuristic)
-    """
     return {
         "image_risk": round(np.mean(x[:4]) / 100, 3),
         "sensor_risk": round(np.mean(np.abs(x[4:8])), 3),
         "questionnaire_risk": round(float(x[8]), 3)
     }
 
-def train_synthetic_model(
-    n_samples: int = 1000,
-    seed: int = 42
-) -> None:
-    """
-    Synthetic training for prototype only
-    """
+def train_synthetic_model(n_samples=1000, seed=42):
     np.random.seed(seed)
     X, y = [], []
 
     for _ in range(n_samples):
         yellow = np.clip(np.random.normal(15, 10), 0, 60)
-        h = np.random.uniform(15, 35)
-        s = np.random.uniform(80, 255)
-        v = np.random.uniform(80, 255)
+        h, s, v = np.random.uniform(15, 35), np.random.uniform(80, 255), np.random.uniform(80, 255)
 
         mq = {
             "MQ_135": np.random.normal(200, 60),
@@ -161,7 +189,7 @@ def train_synthetic_model(
             "MQ_138": np.random.normal(30, 15)
         }
 
-        q_score = np.random.uniform(0, 1)
+        q = np.random.uniform(0, 1)
 
         features = [
             yellow, h, s, v,
@@ -169,79 +197,52 @@ def train_synthetic_model(
             (mq["MQ_136"] - 50) / 50,
             (mq["MQ_137"] - 25) / 25,
             (mq["MQ_138"] - 30) / 30,
-            q_score
+            q
         ]
 
-        risk_index = yellow * 0.4 + abs(mq["MQ_136"] - 50) * 0.3 + q_score * 40
+        risk_index = yellow * 0.4 + abs(mq["MQ_136"] - 50) * 0.3 + q * 40
         p = 1 / (1 + np.exp(-(risk_index - 35) / 8))
         label = np.random.binomial(1, p)
 
         X.append(features)
         y.append(label)
 
-    X = np.array(X)
-    y = np.array(y)
-
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
+    Xs = scaler.fit_transform(np.array(X))
 
     model = LogisticRegression(max_iter=3000)
-    model.fit(X_scaled, y)
+    model.fit(Xs, y)
 
     joblib.dump(model, MODEL_PATH)
     joblib.dump(scaler, SCALER_PATH)
 
-    logger.info("Model trained and saved successfully")
+    logger.info("Synthetic model trained")
 
 def load_model_and_scaler():
     if not os.path.exists(MODEL_PATH):
-        logger.warning("Model not found — training synthetic model")
         train_synthetic_model()
-
     return joblib.load(MODEL_PATH), joblib.load(SCALER_PATH)
 
-def build_feature_vector(
-    image_path: str,
-    sensor_csv: str,
-    answers: List[int]
-) -> np.ndarray:
+# ================= PIPELINE =================
+def build_feature_vector(image_path, sensor_csv, answers):
+    img = extract_image_features(image_path)
+    sensor = extract_sensor_features(sensor_csv)
+    q = questionnaire_score(answers)
 
-    img_feat = extract_image_features(image_path)
-    sensor_feat = extract_sensor_features(sensor_csv)
-    q_score = questionnaire_score(answers)
-
-    x = np.array(img_feat + sensor_feat + [q_score], dtype=np.float32)
+    x = np.array(img + sensor + [q], dtype=np.float32)
 
     if x.shape[0] != EXPECTED_FEATURE_DIM:
         raise ValueError("Feature dimension mismatch")
 
-    if not np.isfinite(x).all():
-        raise ValueError("NaN or Inf in features")
-
     return x
 
-def run_harmomed_safe(
-    input_images: List[str],
-    ref_image: str,
-    out_path: str
-) -> str:
-
+def run_harmomed_safe(input_images, ref_image, out_path):
     result = HarmoMed_lir(input_images, ref_image, out_path)
-
-    if not isinstance(result, str):
-        raise TypeError("HarmoMed must return output image path")
-
-    if not os.path.exists(result):
-        raise FileNotFoundError(result)
-
+    if not isinstance(result, str) or not os.path.exists(result):
+        raise RuntimeError("HarmoMed failed")
     return result
 
-def run_ai_screening(
-    image_path: str,
-    sensor_csv: str,
-    questionnaire_answers: List[int]
-) -> AnalysisResult:
-
+def run_ai_screening(image_path, sensor_csv, questionnaire_answers):
     x = build_feature_vector(image_path, sensor_csv, questionnaire_answers)
     model, scaler = load_model_and_scaler()
 
@@ -258,39 +259,49 @@ def run_ai_screening(
         risk_breakdown=risk_breakdown(x)
     )
 
-# if __name__ == "__main__":
-#     processed_image = run_harmomed_safe(
-#         ["output.jpg"],
-#         "wtest2.jpg",
-#         "images/1.jpg"
-#     )
+def to_json_safe(obj):
+    if isinstance(obj, dict):
+        return {k: to_json_safe(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [to_json_safe(v) for v in obj]
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, (np.float32, np.float64)):
+        return float(obj)
+    elif isinstance(obj, (np.int32, np.int64)):
+        return int(obj)
+    else:
+        return obj
 
-#     result = run_ai_screening(
-#         processed_image,
-#         "sensor.csv",
-#         [3, 2, 4, 1, 3, 2, 4, 3, 2, 1]
-#     )
-
-#     print(result)
 
 def Breathescan_L(input_img, path_img, sensor, ans, result_dir):
     os.makedirs(result_dir, exist_ok=True)
 
+    # 1) Image preprocessing (HarmoMed)
     processed_image = run_harmomed_safe(
         [input_img],
         "wtest2.jpg",
         path_img
     )
 
+    # 2) Load & convert questionnaire CSV -> List[int] (10 answers)
+    questionnaire_answers = load_questionnaire_answers(ans)
+
+    # 3) Run AI screening
     result = run_ai_screening(
         processed_image,
         sensor,
-        ans
+        questionnaire_answers
     )
 
-    # บันทึกผลเป็นไฟล์ JSON
+    # 4) Save JSON result (numpy-safe)
     result_path = os.path.join(result_dir, "analysis_result.json")
     with open(result_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=4)
+        json.dump(
+            to_json_safe(result.__dict__),
+            f,
+            ensure_ascii=False,
+            indent=4
+        )
 
     return result

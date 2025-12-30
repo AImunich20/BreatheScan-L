@@ -8,6 +8,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import requests
+from werkzeug.datastructures import FileStorage
 import os
 from datetime import datetime
 
@@ -283,13 +284,12 @@ def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image
         "filename": new_filename
     }
 
-from werkzeug.datastructures import FileStorage
 
 def HarmoMed_lir(target_img, reference_img, output_path):
     """
     target_img    : list[str]  -> path ของภาพผิว + ตา
     reference_img : str        -> path reference
-    output_path   : str        -> path output สุดท้าย
+    output_path   : str        -> path output (file หรือ folder)
     """
 
     processed_images = []
@@ -309,7 +309,6 @@ def HarmoMed_lir(target_img, reference_img, output_path):
                 uploaded_file
             )
 
-            # ✅ ใช้ key ที่มีจริง
             result_img_path = result.get("result_image")
 
             if result_img_path and os.path.exists(result_img_path):
@@ -317,19 +316,31 @@ def HarmoMed_lir(target_img, reference_img, output_path):
                 if img is not None:
                     processed_images.append(img)
 
-    if len(processed_images) == 0:
+    if not processed_images:
         raise ValueError("HarmoMed_lir: ไม่พบภาพผลลัพธ์จาก pipeline")
 
-    # 🔹 resize ให้ขนาดเท่ากันก่อน (กัน error)
+    # ---------- resize ----------
     base_h, base_w = processed_images[0].shape[:2]
     resized_images = [
         cv2.resize(img, (base_w, base_h))
         for img in processed_images
     ]
 
-    # 🔹 รวมภาพด้วยค่าเฉลี่ย
+    # ---------- average ----------
     final_img = np.mean(resized_images, axis=0).astype(np.uint8)
 
-    cv2.imwrite(output_path, final_img)
+    # =================================================
+    # 🔥 FIX สำคัญ: จัดการ output_path ให้ปลอดภัย
+    # =================================================
+    if os.path.isdir(output_path):
+        output_path = os.path.join(output_path, "harmomed_result.png")
+
+    root, ext = os.path.splitext(output_path)
+    if ext.lower() not in [".png", ".jpg", ".jpeg", ".bmp", ".tiff", ".webp"]:
+        output_path = root + ".png"
+
+    success = cv2.imwrite(output_path, final_img)
+    if not success:
+        raise RuntimeError(f"cv2.imwrite failed: {output_path}")
 
     return output_path

@@ -8,6 +8,7 @@ from HarmoMed import HarmoMed_lir
 import psutil
 import time
 from Breathescan import Breathescan_L
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "20"
@@ -19,6 +20,57 @@ USER_DIR = "user"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(USER_DIR, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+@app.route("/api/knowledge/save_qs", methods=["POST"])
+def save_knowledge_qs():
+    if "user" not in session:
+        return jsonify(success=False, msg="not logged in"), 401
+
+    username = session["user"]["username"]
+    user_dir = os.path.join(USER_DIR, username)
+    qs_dir = os.path.join(user_dir, "questionnaires")
+    os.makedirs(qs_dir, exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"qs_{timestamp}.csv"
+    filepath = os.path.join(qs_dir, filename)
+
+    fields = [
+        "alcohol", "fat_food", "sulfur_food", "fructose",
+        "jaundice", "carotene_food", "breath_odor",
+        "abdominal_pain", "fatigue",
+        "diabetes", "fatty_liver", "hepatitis", "family_history"
+    ]
+
+    row = {}
+    for f in fields:
+        if f in ["diabetes", "fatty_liver", "hepatitis", "family_history"]:
+            row[f] = "1" if request.form.get(f) else "0"
+        else:
+            row[f] = request.form.get(f, "")
+
+    with open(filepath, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerow(row)
+
+    return jsonify(success=True, filename=filename)
+
+@app.route("/api/qs/list")
+def list_qs():
+    if "user" not in session:
+        return jsonify(files=[])
+
+    username = session["user"]["username"]
+    qs_dir = os.path.join(USER_DIR, username, "questionnaires")
+
+    if not os.path.exists(qs_dir):
+        return jsonify(files=[])
+
+    files = sorted(os.listdir(qs_dir), reverse=True)
+    return jsonify(files=files)
+
+
 
 # ---------------- INIT CSV ----------------
 if not os.path.exists(USER_CSV):
@@ -258,6 +310,9 @@ def update_profile():
     return jsonify(success=True)
 
 # ---------------- TEST ----------------
+from datetime import datetime
+import shutil
+
 @app.route("/test", methods=["GET", "POST"])
 def test():
     if "user" not in session:
@@ -265,59 +320,68 @@ def test():
         return redirect(url_for("home"))
 
     if request.method == "POST":
-        file_keys = [
-            "eyeImage",
-            "skinImage",
-            "enoseCSV",
-            "questionnaireCSV",
-            "breathData"
-        ]
-
         username = session["user"]["username"]
 
         base_user_dir = os.path.join(USER_DIR, username)
-        upload_dir = os.path.join(base_user_dir, "uploads")
-        result_dir = os.path.join(base_user_dir, "result")
+        uploads_root = os.path.join(base_user_dir, "uploads")
+        qs_root = os.path.join(base_user_dir, "questionnaires")
 
-        os.makedirs(upload_dir, exist_ok=True)
+        os.makedirs(uploads_root, exist_ok=True)
+
+        # ---------- สร้าง run folder ----------
+        run_id = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        run_dir = os.path.join(uploads_root, run_id)
+        result_dir = os.path.join(run_dir, "result")
+
+        os.makedirs(run_dir, exist_ok=True)
         os.makedirs(result_dir, exist_ok=True)
 
-        saved_files = {}
+        saved = {}
 
-        for key in file_keys:
+        # ---------- save uploaded files ----------
+        file_map = {
+            "eyeImage": "eye.png",
+            "skinImage": "skin.png",
+            "enoseCSV": "enose.csv",
+            "breathData": "breath.csv"
+        }
+
+        for key, filename in file_map.items():
             f = request.files.get(key)
             if f and f.filename:
-                save_path = os.path.join(upload_dir, f.filename)
-                f.save(save_path)
-                saved_files[key] = save_path
+                path = os.path.join(run_dir, filename)
+                f.save(path)
+                saved[key] = path
 
-        if not saved_files:
-            flash("Please upload files", "error")
+        # ---------- questionnaire ----------
+        qs_filename = request.form.get("questionnaire_file")
+        if not qs_filename:
+            flash("Please select questionnaire", "error")
             return redirect(url_for("test"))
 
-        # ----------------------------
-        # เตรียม input ให้ Breathescan_L
-        # ----------------------------
-        input_img = saved_files.get("eyeImage")
-        path_img = upload_dir
+        src_qs = os.path.join(qs_root, qs_filename)
+        dst_qs = os.path.join(run_dir, "questionnaire.csv")
 
-        sensor = saved_files.get("enoseCSV")
-        ans = saved_files.get("questionnaireCSV")
+        if not os.path.exists(src_qs):
+            flash("Questionnaire not found", "error")
+            return redirect(url_for("test"))
 
-        # เรียก AI Pipeline
+        shutil.copy(src_qs, dst_qs)
+
+        # ---------- AI PIPELINE ----------
         result = Breathescan_L(
-            input_img=input_img,
-            path_img=path_img,
-            sensor=sensor,
-            ans=ans,
+            input_img=saved.get("eyeImage"),
+            path_img=run_dir,
+            sensor=saved.get("enoseCSV"),
+            ans=dst_qs,
             result_dir=result_dir
         )
 
-        flash("AI Analysis completed successfully", "success")
-
+        flash("AI Analysis completed", "success")
         return render_template(
             "test.html",
-            result=result
+            result=result,
+            run_id=run_id
         )
 
     return render_template("test.html")
