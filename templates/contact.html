@@ -4,190 +4,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BreatheScan-L | About</title>
+  <title>BreatheScan-L | Contact</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Custom CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body class="bg-gray-50">
+
   {% include "components/navbar.html" %}
 
   <section class="py-20 bg-gradient-to-br from-gray-50 to-blue-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Header -->
       <div class="text-center mb-16">
-        <h1 class="text-5xl font-bold text-gray-900 mb-6">Contact Our Research Team</h1>
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">
+          Contact Our Research Team
+        </h1>
         <p class="text-xl text-gray-600 max-w-4xl mx-auto">
           Get in touch with our experts for collaboration, questions, or more information about BreatheScan-L
         </p>
       </div>
 
       <div class="grid lg:grid-cols-2 gap-12">
-        <!-- Contact Form -->
+
+        <!-- ================= FORM ================= -->
         <div class="bg-white rounded-3xl p-8 shadow-2xl">
-          <h2 class="text-2xl font-bold text-gray-900 mb-6">Send us a Message</h2>
-          <form id="contactForm" class="space-y-6">
+
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">
+            Send us a Message
+          </h2>
+
+          <!-- Flash Message -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+          {% for category, msg in messages %}
+          <div class="mb-6 p-4 rounded-lg
+            {{ 'bg-green-100 text-green-700' if category == 'success'
+               else 'bg-red-100 text-red-700' }}">
+            {{ msg }}
+          </div>
+          {% endfor %}
+          {% endwith %}
+
+          <form method="POST" action="{{ url_for('send_contact') }}" class="space-y-6">
+
             <div class="grid md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
-                <input type="text" id="firstName"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your first name">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  First Name
+                </label>
+                <input type="text" name="first_name" required class="w-full p-3 border border-gray-300 rounded-lg
+                  focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your first name">
               </div>
+
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
-                <input type="text" id="lastName"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Enter your last name">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  Last Name
+                </label>
+                <input type="text" name="last_name" required class="w-full p-3 border border-gray-300 rounded-lg
+                  focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your last name">
               </div>
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input type="email" id="email"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your email">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Email
+              </label>
+              <input type="email" name="email" required class="w-full p-3 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your email">
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Subject</label>
-              <select id="subject"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Subject
+              </label>
+              <select name="subject" required class="w-full p-3 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <option value="">Select a subject</option>
-                <option value="collaboration">Research Collaboration</option>
-                <option value="technical">Technical Questions</option>
-                <option value="partnership">Partnership Inquiry</option>
-                <option value="media">Media Inquiry</option>
-                <option value="other">Other</option>
+                <option value="Research Collaboration">Research Collaboration</option>
+                <option value="Technical Question">Technical Questions</option>
+                <option value="Partnership">Partnership Inquiry</option>
+                <option value="Media">Media Inquiry</option>
+                <option value="Other">Other</option>
               </select>
             </div>
+
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
-              <textarea id="message" rows="5"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter your message"></textarea>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Message
+              </label>
+              <textarea name="message" rows="5" required class="w-full p-3 border border-gray-300 rounded-lg
+                focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your message"></textarea>
             </div>
-            <button type="submit"
-              class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all">
+
+            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-purple-600
+              text-white py-3 rounded-lg font-semibold
+              hover:from-blue-700 hover:to-purple-700 transition-all">
               Send Message
             </button>
+
           </form>
         </div>
 
-        <!-- Contact Information -->
+        <!-- ================= INFO ================= -->
         <div class="space-y-8">
+
           <!-- Research Team -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Research Team</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">
+              Research Team
+            </h3>
+
             <div class="space-y-6">
               <div class="flex items-center space-x-4">
-                <div
-                  class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span class="text-white font-bold text-lg">ST</span>
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600
+                  rounded-full flex items-center justify-center">
+                  <span class="text-white font-bold text-lg">MN</span>
                 </div>
                 <div>
-                  <h4 class="text-lg font-semibold text-gray-900">Natthanathron Wiwatsripaibool</h4>
+                  <h4 class="text-lg font-semibold text-gray-900">
+                    Mr. Natthanathron Wiwatsripaibool
+                  </h4>
                   <p class="text-gray-600">Programmer</p>
                   <p class="text-blue-600">natthanathron@gmail.com</p>
                 </div>
               </div>
-              <div class="flex items-center space-x-4">
-                <div
-                  class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
-                  <span class="text-white font-bold text-lg">DR</span>
-                </div>
-                <div>
-                  <h4 class="text-lg font-semibold text-gray-900">Dr. Michael Rodriguez</h4>
-                  <p class="text-gray-600">AI Research Lead</p>
-                  <p class="text-blue-600">michael.rodriguez@breathescan.org</p>
-                </div>
-              </div>
-              <div class="flex items-center space-x-4">
-                <div
-                  class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
-                  <span class="text-white font-bold text-lg">DR</span>
-                </div>
-                <div>
-                  <h4 class="text-lg font-semibold text-gray-900">Dr. Emily Watson</h4>
-                  <p class="text-gray-600">Clinical Research Director</p>
-                  <p class="text-blue-600">emily.watson@breathescan.org</p>
-                </div>
-              </div>
             </div>
           </div>
 
-          <!-- Contact Methods -->
+          <!-- Contact Info -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Get in Touch</h3>
-            <div class="space-y-4">
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
-                    </path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-gray-900">Email</h4>
-                  <p class="text-gray-600">natthanathorn.wiw@pccpl.ac.th</p>
-                </div>
-              </div>
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z">
-                    </path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-gray-900">Line Official Account</h4>
-                  <p class="text-gray-600">@breathescan-l</p>
-                </div>
-              </div>
-              <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                  </svg>
-                </div>
-                <div>
-                  <h4 class="font-semibold text-gray-900">Address</h4>
-                  <p class="text-gray-600">86 Moo.4 Makhamsung A.Meaung Phitsanulok 65000<br>🌐 Website:
-                    www.pccpl.ac.th<br>✉️ Email: pccpl@pccpl.ac.th<br>☎️ Phone: 055-245115</p>
-                </div>
-              </div>
-            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">
+              Get in Touch
+            </h3>
+
+            <p class="text-gray-600">
+              Email: natthanathorn.wiw@pccpl.ac.th<br>
+              LINE OA: @breathescan-l<br>
+              Phone: 055-245115
+            </p>
           </div>
 
           <!-- Office Hours -->
-          <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-            <h3 class="text-2xl font-bold mb-4">Office Hours</h3>
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Monday - Friday</span>
-                <span>9:00 AM - 6:00 PM</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Saturday</span>
-                <span>10:00 AM - 4:00 PM</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Sunday</span>
-                <span>Closed</span>
-              </div>
-            </div>
-            <p class="text-blue-100 text-sm mt-4">
-              For urgent inquiries, please email us and we'll respond within 24 hours.
+          <div class="bg-gradient-to-r from-blue-600 to-purple-600
+            rounded-2xl p-8 text-white">
+            <h3 class="text-2xl font-bold mb-4">
+              Office Hours
+            </h3>
+            <p>
+              Mon - Fri : 9:00 - 18:00<br>
+              Sat : 10:00 - 16:00<br>
+              Sun : Closed
             </p>
           </div>
+
         </div>
       </div>
     </div>
   </section>
+
   <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
 
 </html>

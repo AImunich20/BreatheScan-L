@@ -9,6 +9,11 @@ import psutil
 import time
 from Breathescan import Breathescan_L
 from datetime import datetime
+import smtplib
+from email.message import EmailMessage
+
+print(os.environ.get("GMAIL_APP_PASSWORD"))
+
 
 app = Flask(__name__)
 app.secret_key = "20"
@@ -139,9 +144,50 @@ def HarmoMed():
 def knowledge():
     return render_template("knowledge.html")
 
-@app.route("/contact")
+@app.route("/contact", methods=["GET"])
 def contact():
     return render_template("contact.html")
+
+@app.route("/send-contact", methods=["POST"])
+def send_contact():
+    first = request.form["first_name"]
+    last = request.form["last_name"]
+    email = request.form["email"]
+    subject = request.form["subject"]
+    message = request.form["message"]
+
+    msg = EmailMessage()
+    msg["Subject"] = f"BreatheScan-L Contact | {subject}"
+    msg["From"] = "zen20.munich@gmail.com"     # ต้องตรงกับ SMTP
+    msg["To"] = "natthanathron@gmail.com"
+    msg["Reply-To"] = email
+
+    msg.set_content(f"""
+New Contact Message
+
+Name: {first} {last}
+Sender Email: {email}
+Subject: {subject}
+
+Message:
+{message}
+""")
+
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+            smtp.login(
+                "zen20.munich@gmail.com",
+                os.environ.get("GMAIL_APP_PASSWORD")
+            )
+            smtp.send_message(msg)
+
+        flash("Message sent successfully!", "success")
+
+    except Exception as e:
+        print("EMAIL ERROR:", e)
+        flash("Failed to send message", "error")
+
+    return redirect(url_for("contact"))
 
 # ---------------- LOGIN ----------------
 @app.route("/login", methods=["POST"])

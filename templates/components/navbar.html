@@ -76,42 +76,26 @@
 
         </div>
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden bg-white border-t shadow-lg">
+        <div id="mobile-menu"
+            class="md:hidden hidden bg-white border-t shadow-lg fixed top-16 left-0 w-full z-40 transition-transform duration-300 ease-in-out -translate-y-full">
             <div class="px-4 py-4 space-y-3">
+                {% set active = "text-blue-600 font-medium border-l-4 border-blue-600 pl-2" %}
+                {% set inactive = "text-gray-700 hover:text-blue-600 transition-colors pl-2" %}
 
-                <a href="{{ url_for('home') }}" class="block {{ active if request.endpoint == 'home' else inactive }}">
-                    Home
-                </a>
-
+                <a href="{{ url_for('home') }}"
+                    class="block {{ active if request.endpoint == 'home' else inactive }}">Home</a>
                 <a href="{{ url_for('about') }}"
-                    class="block {{ active if request.endpoint == 'about' else inactive }}">
-                    About
-                </a>
-
+                    class="block {{ active if request.endpoint == 'about' else inactive }}">About</a>
                 <a href="{{ url_for('research') }}"
-                    class="block {{ active if request.endpoint == 'research' else inactive }}">
-                    Research
-                </a>
-
+                    class="block {{ active if request.endpoint == 'research' else inactive }}">Research</a>
                 <a href="{{ url_for('knowledge') }}"
-                    class="block {{ active if request.endpoint == 'knowledge' else inactive }}">
-                    Knowledge
-                </a>
-
-                <a href="{{ url_for('test') }}" class="block {{ active if request.endpoint == 'test' else inactive }}">
-                    Test Model
-                </a>
-
+                    class="block {{ active if request.endpoint == 'knowledge' else inactive }}">Knowledge</a>
+                <a href="{{ url_for('test') }}"
+                    class="block {{ active if request.endpoint == 'test' else inactive }}">Test Model</a>
                 <a href="{{ url_for('HarmoMed') }}"
-                    class="block {{ active if request.endpoint == 'HarmoMed' else inactive }}">
-                    HarmoMed
-                </a>
-
+                    class="block {{ active if request.endpoint == 'HarmoMed' else inactive }}">HarmoMed</a>
                 <a href="{{ url_for('contact') }}"
-                    class="block {{ active if request.endpoint == 'contact' else inactive }}">
-                    Contact
-                </a>
-
+                    class="block {{ active if request.endpoint == 'contact' else inactive }}">Contact</a>
             </div>
         </div>
 

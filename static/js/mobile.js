@@ -1,4 +1,3 @@
-
 (() => {
     const btn = document.getElementById("mobile-menu-button");
     const menu = document.getElementById("mobile-menu");
@@ -10,7 +9,7 @@
 
     btn.addEventListener("click", () => {
         console.log("✅ mobile menu clicked");
-        menu.classList.toggle("hidden");
+        menu.classList.toggle("-translate-y-full"); // slide down/up
+        menu.classList.toggle("hidden"); // optional for accessibility
     });
 })();
-

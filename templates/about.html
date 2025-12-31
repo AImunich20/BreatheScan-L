@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BreatheScan-L | About</title>
+  <title>BreatheScan-L | เกี่ยวกับเรา</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
@@ -15,28 +15,28 @@
   <nav class="flex justify-end items-center p-4">
     {% include "components/login.html" %}
   </nav>
+
   <!-- ABOUT PAGE -->
   <section class="py-20 bg-gradient-to-br from-blue-50 to-indigo-100">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16">
-        <h1 class="text-5xl font-bold text-gray-900 mb-6">About BreatheScan-L</h1>
+        <h1 class="text-5xl font-bold text-gray-900 mb-6">เกี่ยวกับ BreatheScan-L</h1>
         <p class="text-xl text-gray-600 max-w-4xl mx-auto">
-          Revolutionizing liver disease diagnosis through innovative AI technology and multimodal analysis
+          นวัตกรรมตรวจวินิจฉัยโรคตับด้วย AI และการวิเคราะห์ข้อมูลหลายช่องทางอย่างแม่นยำและไม่เจ็บตัว
         </p>
       </div>
 
       <!-- Project Introduction -->
       <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
         <div>
-          <h2 class="text-3xl font-bold text-gray-900 mb-6">Project Introduction</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-6">ภาพรวมโครงการ</h2>
           <p class="text-lg text-gray-600 mb-6">
-            BreatheScan-L represents a breakthrough in non-invasive medical diagnostics, combining artificial
-            intelligence
-            with advanced sensor technology to detect liver diseases at their earliest stages.
+            BreatheScan-L เป็นเทคโนโลยีตรวจวินิจฉัยโรคตับแบบไม่รุกราน ใช้ปัญญาประดิษฐ์ร่วมกับเซ็นเซอร์อัจฉริยะ
+            เพื่อวิเคราะห์ข้อมูลการหายใจ, รูปภาพผิวและตา และแบบสอบถามสุขภาพ
           </p>
           <p class="text-lg text-gray-600 mb-6">
-            Our mission is to make liver disease screening accessible, affordable, and accurate for everyone,
-            potentially saving millions of lives through early detection and intervention.
+            เป้าหมายของเราคือทำให้การตรวจโรคตับเป็นเรื่องง่าย, เข้าถึงได้, และแม่นยำ
+            ลดความเสี่ยงและช่วยชีวิตผู้ป่วยตั้งแต่ระยะแรก
           </p>
           <div class="space-y-4">
             <div class="flex items-center space-x-3">
@@ -45,7 +45,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <span class="text-gray-700">95% accuracy in early-stage detection</span>
+              <span class="text-gray-700">ตรวจจับโรคตับระยะเริ่มต้นแม่นยำ 95%</span>
             </div>
             <div class="flex items-center space-x-3">
               <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -53,7 +53,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <span class="text-gray-700">Non-invasive and painless procedure</span>
+              <span class="text-gray-700">กระบวนการตรวจไม่เจ็บตัว</span>
             </div>
             <div class="flex items-center space-x-3">
               <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
@@ -61,7 +61,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
               </div>
-              <span class="text-gray-700">Results available in under 5 minutes</span>
+              <span class="text-gray-700">ผลตรวจพร้อมใช้ภายใน 5 นาที</span>
             </div>
           </div>
         </div>
@@ -70,55 +70,54 @@
             <div
               class="w-32 h-32 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 
-                  9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 
-                  0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
               </svg>
             </div>
-            <h3 class="text-2xl font-bold text-gray-900 mb-4">Advanced AI Technology</h3>
-            <p class="text-gray-600">Powered by machine learning algorithms trained on thousands of medical cases</p>
+            <h3 class="text-2xl font-bold text-gray-900 mb-4">เทคโนโลยี AI ขั้นสูง</h3>
+            <p class="text-gray-600">ใช้ Machine Learning วิเคราะห์จากฐานข้อมูลผู้ป่วยหลายพันเคส</p>
           </div>
         </div>
       </div>
 
       <!-- How It Works -->
       <div class="mb-20">
-        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">How It Works</h2>
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">ขั้นตอนการทำงาน</h2>
         <div class="grid md:grid-cols-4 gap-8">
           <div class="text-center">
             <div class="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span class="text-2xl font-bold text-white">1</span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Breath Sample</h3>
-            <p class="text-gray-600">Patient provides breath sample using E-nose sensor</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">เก็บตัวอย่างลมหายใจ</h3>
+            <p class="text-gray-600">ผู้ป่วยเป่าลมหายใจลงเซ็นเซอร์ E-nose</p>
           </div>
           <div class="text-center">
             <div class="w-20 h-20 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span class="text-2xl font-bold text-white">2</span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Image Capture</h3>
-            <p class="text-gray-600">Skin and eye images captured for visual analysis</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">ถ่ายรูป</h3>
+            <p class="text-gray-600">ถ่ายภาพตาและผิวเพื่อวิเคราะห์ทางสายตา</p>
           </div>
           <div class="text-center">
             <div class="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span class="text-2xl font-bold text-white">3</span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">Health Survey</h3>
-            <p class="text-gray-600">Complete comprehensive health questionnaire</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">แบบสอบถามสุขภาพ</h3>
+            <p class="text-gray-600">ผู้ป่วยกรอกแบบสอบถามสุขภาพอย่างครบถ้วน</p>
           </div>
           <div class="text-center">
             <div class="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
               <span class="text-2xl font-bold text-white">4</span>
             </div>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">AI Analysis</h3>
-            <p class="text-gray-600">AI processes all data and provides diagnosis</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">วิเคราะห์ด้วย AI</h3>
+            <p class="text-gray-600">AI ประมวลผลข้อมูลทั้งหมดและให้ผลวินิจฉัย</p>
           </div>
         </div>
       </div>
 
       <!-- Objectives -->
       <div class="bg-white rounded-3xl p-12 shadow-2xl">
-        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Project Objectives</h2>
+        <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">วัตถุประสงค์ของโครงการ</h2>
         <div class="grid md:grid-cols-2 gap-8">
           <div class="space-y-6">
             <div class="flex items-start space-x-4">
@@ -129,9 +128,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Early Detection</h3>
-                <p class="text-gray-600">Identify liver diseases in their earliest stages when treatment is most
-                  effective</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ตรวจพบโรคตั้งแต่ระยะเริ่มต้น</h3>
+                <p class="text-gray-600">ช่วยให้ผู้ป่วยได้รับการรักษาตั้งแต่เนิ่นๆ เพิ่มโอกาสหาย</p>
               </div>
             </div>
             <div class="flex items-start space-x-4">
@@ -143,8 +141,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Cost-Effective</h3>
-                <p class="text-gray-600">Reduce healthcare costs through affordable screening technology</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ประหยัดค่าใช้จ่าย</h3>
+                <p class="text-gray-600">ลดค่าใช้จ่ายด้านสุขภาพด้วยเทคโนโลยีตรวจที่เข้าถึงได้</p>
               </div>
             </div>
             <div class="flex items-start space-x-4">
@@ -156,9 +154,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Global Access</h3>
-                <p class="text-gray-600">Make liver disease screening accessible worldwide, especially in underserved
-                  areas</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">เข้าถึงทั่วโลก</h3>
+                <p class="text-gray-600">ให้บริการตรวจโรคตับได้ทั่วโลก โดยเฉพาะพื้นที่ห่างไกล</p>
               </div>
             </div>
           </div>
@@ -171,8 +168,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">High Accuracy</h3>
-                <p class="text-gray-600">Achieve diagnostic accuracy comparable to traditional invasive methods</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ความแม่นยำสูง</h3>
+                <p class="text-gray-600">ผลตรวจเทียบเท่าวิธีการตรวจแบบรุกราน</p>
               </div>
             </div>
             <div class="flex items-start space-x-4">
@@ -183,8 +180,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Patient Comfort</h3>
-                <p class="text-gray-600">Eliminate the need for invasive procedures and reduce patient anxiety</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ผู้ป่วยสบาย</h3>
+                <p class="text-gray-600">ไม่ต้องเจ็บตัว ลดความกังวลและความเครียดของผู้ป่วย</p>
               </div>
             </div>
             <div class="flex items-start space-x-4">
@@ -196,8 +193,8 @@
                 </svg>
               </div>
               <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">Data-Driven</h3>
-                <p class="text-gray-600">Continuously improve through machine learning and data analysis</p>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">ปรับปรุงด้วยข้อมูล</h3>
+                <p class="text-gray-600">AI เรียนรู้และพัฒนาผลตรวจอย่างต่อเนื่องจากข้อมูลผู้ป่วย</p>
               </div>
             </div>
           </div>
@@ -206,25 +203,7 @@
 
     </div>
   </section>
-  <script src="assets/js/script.js"></script>
 
-  <style>
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: scale(0.95);
-      }
-
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    .animate-fadeIn {
-      animation: fadeIn 0.25s ease-out;
-    }
-  </style>
   <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
