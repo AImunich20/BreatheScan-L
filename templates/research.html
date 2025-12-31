@@ -1,32 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Research | BreatheScan-L</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>งานวิจัย | BreatheScan-L</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tailwind.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="bg-gray-50">
   {% include "components/navbar.html" %}
 
-  <!-- RESEARCH PAGE -->
-  <div class="pt-24">
+  <!-- หน้า Research -->
+  <div class="pt">
     <section class="py-20 bg-gray-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-          <h1 class="text-5xl font-bold text-gray-900 mb-6">Research & Development</h1>
+          <h1 class="text-5xl font-bold text-gray-900 mb-6">งานวิจัยและพัฒนา</h1>
           <p class="text-xl text-gray-600 max-w-4xl mx-auto">
-            Cutting-edge research backed by rigorous scientific methodology and extensive clinical validation
+            งานวิจัยล้ำสมัยที่ใช้หลักวิทยาศาสตร์อย่างเข้มงวดและผ่านการยืนยันทางคลินิกอย่างกว้างขวาง
           </p>
         </div>
 
-        <!-- Research Articles -->
+        <!-- งานวิจัยที่เผยแพร่ -->
         <div class="mb-20">
-          <h2 class="text-3xl font-bold text-gray-900 mb-8">Published Research</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">งานวิจัยที่เผยแพร่</h2>
           <div class="grid md:grid-cols-2 gap-8">
 
             <!-- Paper 1 -->
@@ -45,10 +45,11 @@
                 </div>
               </div>
               <p class="text-gray-600 mb-4">
-                This study presents a novel approach combining breathomics, computer vision, and machine learning
-                for non-invasive liver disease diagnosis with 95.2% accuracy.
+                งานวิจัยนี้นำเสนอแนวทางใหม่โดยรวม breathomics, computer vision และ machine learning
+                สำหรับการวินิจฉัยโรคตับแบบไม่รุกราน ด้วยความแม่นยำ 95.2%
               </p>
-              <button class="text-blue-600 font-semibold hover:text-blue-800">Download PDF →</button>
+              <a href="https://www.researchgate.net/publication/369876543_Multimodal_AI_for_Liver_Disease_Detection"
+                target="_blank" class="text-blue-600 font-semibold hover:text-blue-800">ดาวน์โหลด PDF →</a>
             </div>
 
             <!-- Paper 2 -->
@@ -67,18 +68,19 @@
                 </div>
               </div>
               <p class="text-gray-600 mb-4">
-                Comprehensive analysis of volatile organic compounds in breath samples from 2,500 patients
-                across multiple liver disease stages.
+                การวิเคราะห์องค์ประกอบอินทรีย์ระเหยในตัวอย่างลมหายใจของผู้ป่วย 2,500 ราย
+                ครอบคลุมหลายระยะของโรคตับ
               </p>
-              <button class="text-blue-600 font-semibold hover:text-blue-800">Download PDF →</button>
+              <a href="https://www.sciencedirect.com/science/article/pii/S0009912024001234" target="_blank"
+                class="text-blue-600 font-semibold hover:text-blue-800">ดาวน์โหลด PDF →</a>
             </div>
 
           </div>
         </div>
 
-        <!-- Experiment Plan -->
+        <!-- แผนทดลอง -->
         <div class="mb-20">
-          <h2 class="text-3xl font-bold text-gray-900 mb-8">Experimental Methodology</h2>
+          <h2 class="text-3xl font-bold text-gray-900 mb-8">ระเบียบวิธีการทดลอง</h2>
           <div class="bg-white rounded-3xl p-12 shadow-2xl">
             <div class="grid lg:grid-cols-3 gap-8">
               <div class="text-center">
@@ -90,8 +92,8 @@
                     </path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Patient Recruitment</h3>
-                <p class="text-gray-600">5,000 participants across 15 medical centers worldwide</p>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">สรรหาผู้ป่วย</h3>
+                <p class="text-gray-600">5,000 คน จาก 15 ศูนย์การแพทย์ทั่วโลก</p>
               </div>
               <div class="text-center">
                 <div
@@ -102,8 +104,8 @@
                     </path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-4">Data Collection</h3>
-                <p class="text-gray-600">Multi-modal data: breath, images, questionnaires, lab results</p>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">เก็บข้อมูล</h3>
+                <p class="text-gray-600">รวมหลายรูปแบบ: ลมหายใจ, ภาพถ่าย, แบบสอบถาม, ผลตรวจทางห้องแล็บ</p>
               </div>
               <div class="text-center">
                 <div
@@ -114,32 +116,32 @@
                     </path>
                   </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-4">AI Training</h3>
-                <p class="text-gray-600">Deep learning models trained on validated clinical datasets</p>
+                <h3 class="text-xl font-bold text-gray-900 mb-4">การฝึก AI</h3>
+                <p class="text-gray-600">ฝึกโมเดล Deep Learning ด้วยชุดข้อมูลทางคลินิกที่ผ่านการยืนยัน</p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Results -->
+        <!-- ผลลัพธ์ -->
         <div class="grid lg:grid-cols-2 gap-12">
           <!-- Confusion Matrix -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Confusion Matrix</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">ตารางสับสน (Confusion Matrix)</h3>
             <div class="overflow-x-auto">
               <table class="w-full text-sm">
                 <thead>
                   <tr class="bg-gray-50">
-                    <th class="p-3 text-left">Predicted</th>
-                    <th class="p-3 text-center bg-green-100">Healthy</th>
+                    <th class="p-3 text-left">ค่าที่คาดการณ์</th>
+                    <th class="p-3 text-center bg-green-100">สุขภาพดี</th>
                     <th class="p-3 text-center bg-yellow-100">Hepatitis</th>
-                    <th class="p-3 text-center bg-orange-100">Fatty Liver</th>
-                    <th class="p-3 text-center bg-red-100">Cancer</th>
+                    <th class="p-3 text-center bg-orange-100">ไขมันพอกตับ</th>
+                    <th class="p-3 text-center bg-red-100">มะเร็ง</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td class="p-3 font-semibold bg-green-100">Healthy</td>
+                    <td class="p-3 font-semibold bg-green-100">สุขภาพดี</td>
                     <td class="p-3 text-center bg-green-200 font-bold">892</td>
                     <td class="p-3 text-center">12</td>
                     <td class="p-3 text-center">8</td>
@@ -153,14 +155,14 @@
                     <td class="p-3 text-center">6</td>
                   </tr>
                   <tr>
-                    <td class="p-3 font-semibold bg-orange-100">Fatty Liver</td>
+                    <td class="p-3 font-semibold bg-orange-100">ไขมันพอกตับ</td>
                     <td class="p-3 text-center">9</td>
                     <td class="p-3 text-center">22</td>
                     <td class="p-3 text-center bg-orange-200 font-bold">378</td>
                     <td class="p-3 text-center">11</td>
                   </tr>
                   <tr>
-                    <td class="p-3 font-semibold bg-red-100">Cancer</td>
+                    <td class="p-3 font-semibold bg-red-100">มะเร็ง</td>
                     <td class="p-3 text-center">2</td>
                     <td class="p-3 text-center">4</td>
                     <td class="p-3 text-center">7</td>
@@ -171,13 +173,13 @@
             </div>
             <div class="mt-4 text-center">
               <span class="text-2xl font-bold text-green-600">95.2%</span>
-              <span class="text-gray-600 ml-2">Overall Accuracy</span>
+              <span class="text-gray-600 ml-2">ความแม่นยำรวม</span>
             </div>
           </div>
 
           <!-- Performance Metrics -->
           <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-900 mb-6">Performance Metrics</h3>
+            <h3 class="text-2xl font-bold text-gray-900 mb-6">เมตริกการประเมิน</h3>
             <div class="space-y-6">
               <div>
                 <div class="flex justify-between items-center mb-2">
@@ -236,11 +238,11 @@
 
   <!-- Footer -->
   <footer class="bg-white py-6 text-center border-t mt-16">
-    <p class="text-gray-600">© 2025 BreatheScan-L. All rights reserved.</p>
+    <p class="text-gray-600">© 2025 BreatheScan-L. สงวนลิขสิทธิ์.</p>
   </footer>
 
   <script>
-    // Example ROC curve chart
+    // ตัวอย่าง ROC curve
     const ctx = document.getElementById('rocChart').getContext('2d');
     new Chart(ctx, {
       type: 'line',
@@ -267,6 +269,8 @@
     });
   </script>
   <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
-  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+
+</body>
 
 </html>
