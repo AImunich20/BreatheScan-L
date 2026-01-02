@@ -555,7 +555,13 @@ def test():
                     chat_messages.append({'role': 'system', 'name': rk, 'content': rb[rk]})
 
         # attach files lists as metadata (not shown in chat)
-        reduced = {'chat_messages': chat_messages, 'run_files': run_files, 'result_files': result_files}
+        reduced = {
+            'chat_messages': chat_messages, 
+            'run_files': run_files, 
+            'result_files': result_files,
+            'processed_image': analysis_json.get('processed_image') if analysis_json else None,
+            'per_image': analysis_json.get('per_image', []) if analysis_json else []
+        }
 
         return render_template(
             "test.html",

@@ -26,6 +26,14 @@ SCALER_PATH = "scaler.pkl"
 
 EXPECTED_FEATURE_DIM = 9
 EPS = 1e-6
+# Heuristic / model blending: set alpha=0 to use heuristic only (guarantee sensor 40% impact)
+# You can change this back to e.g. 0.3 to blend model and heuristic.
+HEURISTIC_BLEND_ALPHA = 0.0
+
+# Sensor scaling parameters (sigmoid): make sensor contributions more sensitive
+# Increase k and lower shift so small deviations become significant for the sensor component
+SENSOR_SIGMOID_K = 20.0
+SENSOR_SIGMOID_SHIFT = 0.01
 
 YELLOW_HSV_LOWER = np.array([18, 80, 80])
 YELLOW_HSV_UPPER = np.array([35, 255, 255])
@@ -242,6 +250,42 @@ def risk_breakdown(x: np.ndarray) -> Dict[str, float]:
         "questionnaire_risk": round(float(x[8]), 3)
     }
 
+
+def compute_weighted_risk(x: np.ndarray, w_image=0.4, w_sensor=0.4, w_q=0.2,
+                          sensor_k=SENSOR_SIGMOID_K, sensor_shift=SENSOR_SIGMOID_SHIFT) -> Dict[str, float]:
+    """Compute normalized component risks and weighted aggregate.
+
+    - image component: mean of first 4 features interpreted as percent where 0-100 -> 0-1
+    - sensor component: mean absolute of sensor z-features (already scaled), clipped to [0,1]
+    - questionnaire component: already in [0,1]
+    Returns dict with image_risk, sensor_risk, questionnaire_risk, weighted_probability
+    """
+    img_comp = float(np.mean(x[:4]) / 100.0)
+    img_comp = float(np.clip(img_comp, 0.0, 1.0))
+
+    mean_abs_z = float(np.mean(np.abs(x[4:8])))
+    # Apply a sigmoid transform to make small deviations more impactful when they exceed shift
+    try:
+        sensor_comp = 1.0 / (1.0 + float(np.exp(-sensor_k * (mean_abs_z - sensor_shift))))
+    except Exception:
+        sensor_comp = float(np.clip(mean_abs_z, 0.0, 1.0))
+
+    # Ensure in [0,1]
+    sensor_comp = float(np.clip(sensor_comp, 0.0, 1.0))
+
+    q_comp = float(x[8])
+    q_comp = float(np.clip(q_comp, 0.0, 1.0))
+
+    weighted = img_comp * w_image + sensor_comp * w_sensor + q_comp * w_q
+    weighted = float(np.clip(weighted, 0.0, 1.0))
+
+    return {
+        "image_risk": round(img_comp, 3),
+        "sensor_risk": round(sensor_comp, 3),
+        "questionnaire_risk": round(q_comp, 3),
+    "weighted_probability": round(weighted, 3)
+    }
+
 def train_synthetic_model(n_samples=1000, seed=42):
     np.random.seed(seed)
     X, y = [], []
@@ -328,15 +372,32 @@ def run_ai_screening(image_path, sensor_csv, questionnaire_answers):
 
     x_scaled = scaler.transform(x.reshape(1, -1))
     prob = float(model.predict_proba(x_scaled)[0, 1])
+    # compute weighted risk (image 40%, sensor 40%, questionnaire 20%) using sigmoid sensor scaling
+    wb = compute_weighted_risk(x, w_image=0.4, w_sensor=0.4, w_q=0.2)
+    weighted_prob = wb.get('weighted_probability', round(prob, 3))
+
+    # Blend model probability and heuristic weighted probability
+    alpha = HEURISTIC_BLEND_ALPHA
+    final_prob = float(np.clip(alpha * prob + (1.0 - alpha) * weighted_prob, 0.0, 1.0))
+
+    # Return both model and heuristic components in breakdown for inspection
+    breakdown = {
+        'image_risk': wb['image_risk'],
+        'sensor_risk': wb['sensor_risk'],
+        'questionnaire_risk': wb['questionnaire_risk'],
+        'model_probability': round(prob, 3),
+        'weighted_probability': wb['weighted_probability'],
+        'final_probability': round(final_prob, 3)
+    }
 
     return AnalysisResult(
         image_features=x[:4].tolist(),
         sensor_features=x[4:8].tolist(),
         questionnaire_score=float(x[8]),
-        risk_probability=round(prob, 3),
-        risk_level=risk_label(prob),
+        risk_probability=round(final_prob, 3),
+        risk_level=risk_label(final_prob),
         model_version=MODEL_VERSION,
-        risk_breakdown=risk_breakdown(x)
+        risk_breakdown=breakdown
     )
 
 def to_json_safe(obj):
