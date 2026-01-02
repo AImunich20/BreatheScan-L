@@ -1,0 +1,43 @@
+<!-- Floating Chat Button -->
+<button id="chatBtn"
+    class="fixed bottom-6 right-6 w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-lg hover:bg-blue-500 transition z-50"
+    title="Chat with us">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.745 0-3.37-.47-4.743-1.283L3 21l1.283-4.257C3.47 15.37 3 13.745 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+    </svg>
+</button>
+<div id="chatPopup" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 hidden z-40">
+    <div class="bg-white rounded-xl shadow-2xl w-96 max-w-full p-6 relative">
+        <button id="closeChat" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800">
+        </button>
+        <h2 class="text-xl font-bold mb-4">Chat with us</h2>
+        <div class="h-64 overflow-y-auto border rounded p-2 mb-4">
+            <p class="text-gray-600">Hello! How can we help you today?</p>
+        </div>
+        <div class="flex space-x-2">
+            <input type="text" placeholder="Type a message..."
+                class="flex-1 border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">Send</button>
+        </div>
+    </div>
+</div>
+<script>
+    const chatBtn = document.getElementById('chatBtn');
+    const chatPopup = document.getElementById('chatPopup');
+    const closeChat = document.getElementById('closeChat');
+
+    chatBtn.addEventListener('click', () => {
+        chatPopup.classList.remove('hidden');
+    });
+
+    closeChat.addEventListener('click', () => {
+        chatPopup.classList.add('hidden');
+    });
+    chatPopup.addEventListener('click', (e) => {
+        if (e.target === chatPopup) {
+            chatPopup.classList.add('hidden');
+        }
+    });
+</script>

@@ -12,7 +12,7 @@ from datetime import datetime
 import smtplib
 from email.message import EmailMessage
 
-print(os.environ.get("GMAIL_APP_PASSWORD"))
+print("sdszkwptchwgsbyw")
 
 
 app = Flask(__name__)
@@ -177,7 +177,7 @@ Message:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
             smtp.login(
                 "zen20.munich@gmail.com",
-                os.environ.get("GMAIL_APP_PASSWORD")
+                "sdszkwptchwgsbyw"
             )
             smtp.send_message(msg)
 
