@@ -23,7 +23,8 @@
       </div>
 
       <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <form id="testForm" action="{{ url_for('test') }}" method="POST" enctype="multipart/form-data" class="p-12">
+        <div id="uploadSection" class="p-12" style="display: {{ 'none' if analysis else 'block' }};">
+          <form id="testForm" action="{{ url_for('test') }}" method="POST" enctype="multipart/form-data">
           <!-- Progress Bar -->
           <div class="bg-gray-200 h-2 mb-8 rounded-full">
             <div id="progress" class="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full" style="width: 0%;">
@@ -103,14 +104,69 @@
               </div>
             </div>
             <div class="text-center mt-8">
-              <button type="submit"
+              <button id="submitBtn" type="submit"
                 class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700">
                 Submit & Analyze
               </button>
 
+              <!-- processing overlay icon -->
+              <div id="processingOverlay" class="hidden mt-4 text-center">
+                <div class="inline-flex items-center gap-3 text-gray-600">
+                  <svg class="animate-spin h-6 w-6 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                  Processing...
+                </div>
+              </div>
+
             </div>
           </div>
-        </form>
+          </form>
+        </div>
+        <div id="resultSection" class="p-8 border-t" style="display: {{ 'block' if analysis else 'none' }};">
+  {% if analysis and analysis.chat_messages %}
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h3 class="text-2xl font-bold">Analysis Result</h3>
+              <div class="text-sm text-gray-500">Run: <strong>{{ run_id }}</strong></div>
+            </div>
+            <div class="flex items-center gap-2">
+              <a href="{{ url_for('run_file', filepath=run_id + '/result/analysis_result.json') }}" class="px-3 py-2 bg-blue-600 text-white rounded">Download JSON</a>
+              <button id="backBtn" class="px-4 py-2 bg-gray-200 rounded" onclick="showUpload(); return false;">Back</button>
+            </div>
+          </div>
+          <div class="bg-white rounded p-6 shadow-sm">
+            <h4 class="font-semibold mb-4">Analysis Overview</h4>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+              <div class="p-3 border rounded text-center">
+                <div class="text-sm text-gray-600 mb-2">Risk breakdown</div>
+                <div style="width:100%;max-width:320px;margin:0 auto;aspect-ratio:1/1;">
+                  <canvas id="riskPie"></canvas>
+                </div>
+              </div>
+              <div class="p-3 border rounded">
+                <div class="text-sm text-gray-600 mb-2">Image & Sensor features</div>
+                <div style="width:100%;max-width:460px;margin:0 auto;aspect-ratio:16/9;">
+                  <canvas id="featuresLine"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <h4 class="font-semibold mb-3">Analysis Chat</h4>
+            <div class="space-y-3">
+              {% for m in analysis.chat_messages %}
+                <div class="p-3 rounded-lg bg-gray-100">
+                  <div class="text-xs text-gray-500">{{ m.name }}</div>
+                  <pre class="text-sm text-gray-800 whitespace-pre-wrap">{{ m.content }}</pre>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+        </div>
+  {# duplicate block removed - concise single result view above is used #}
       </div>
     </div>
   </section>
@@ -151,6 +207,14 @@
       if (currentStep > 1) nextStep(currentStep - 1);
     }
   </script>
+  <script>
+    // show overlay while submitting
+    const form = document.getElementById('testForm');
+    form.addEventListener('submit', () => {
+      document.getElementById('processingOverlay').classList.remove('hidden');
+      document.getElementById('submitBtn').disabled = true;
+    });
+  </script>
   <script src="{{ url_for('static', filename='js/user_menu.js') }}"></script>
   <script>
     function openQSModal() {
@@ -186,6 +250,112 @@
       document.getElementById("selectedQS").innerText = "✅ " + filename;
       closeQSModal();
     }
+  </script>
+  <script>
+    // Toggle between upload and result sections
+    function showUpload() {
+      const upload = document.getElementById('uploadSection');
+      const result = document.getElementById('resultSection');
+      upload.style.display = 'block';
+      result.style.display = 'none';
+      // reset submit button & overlay
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) submitBtn.disabled = false;
+      const overlay = document.getElementById('processingOverlay');
+      if (overlay) overlay.classList.add('hidden');
+    }
+
+    function showResult() {
+      const upload = document.getElementById('uploadSection');
+      const result = document.getElementById('resultSection');
+      upload.style.display = 'none';
+      result.style.display = 'block';
+    }
+  </script>
+
+  <script>
+    // Set color swatches from data-rgb to avoid template/CSS lint issues
+    document.addEventListener('DOMContentLoaded', function() {
+      var swatches = document.querySelectorAll('[data-rgb]');
+      swatches.forEach(function(el) {
+        var rgb = el.getAttribute('data-rgb');
+        if (!rgb) return;
+        el.style.backgroundColor = 'rgb(' + rgb + ')';
+      });
+    });
+  </script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script type="application/json" id="analysisJson">{{ analysis | tojson | safe }}</script>
+  <script>
+    (function(){
+      try{
+        const raw = document.getElementById('analysisJson')?.textContent || '{}';
+        const analysis = JSON.parse(raw);
+        const messages = analysis.chat_messages || [];
+
+        // parse risk breakdown
+        const risk = {};
+        messages.forEach(m => {
+          if (m.name === 'risk_breakdown') {
+            Object.assign(risk, m.content || {});
+          }
+          // also allow individual risk items
+          if (m.name === 'image_risk') risk.image_risk = m.content;
+          if (m.name === 'sensor_risk') risk.sensor_risk = m.content;
+          if (m.name === 'questionnaire_risk') risk.questionnaire_risk = m.content;
+        });
+
+        const pieLabels = ['Image', 'Sensor', 'Questionnaire'];
+        const pieData = [risk.image_risk||0, risk.sensor_risk||0, risk.questionnaire_risk||0];
+
+        const ctxPie = document.getElementById('riskPie');
+        if (ctxPie) {
+          new Chart(ctxPie.getContext('2d'), {
+            type: 'pie',
+            data: {
+              labels: pieLabels,
+              datasets: [{
+                data: pieData,
+                backgroundColor: ['#ef4444','#f59e0b','#10b981']
+              }]
+            },
+            options: {responsive:true, maintainAspectRatio:true}
+          });
+        }
+
+        // features line chart - use first found image_features and sensor_features
+        let imgFeat = null, sensFeat = null;
+        messages.forEach(m => {
+          if (m.name === 'image_features') imgFeat = Array.isArray(m.content) ? m.content : null;
+          if (m.name === 'sensor_features') sensFeat = Array.isArray(m.content) ? m.content : null;
+        });
+        if (!imgFeat && messages.length) {
+          // scan numeric arrays in messages fallback
+          for (let m of messages) {
+            if (!imgFeat && Array.isArray(m.content) && m.content.length>=3) imgFeat = m.content;
+            if (!sensFeat && Array.isArray(m.content) && m.content.length>=3) sensFeat = m.content;
+          }
+        }
+
+        const ctxLine = document.getElementById('featuresLine');
+        if (ctxLine && (imgFeat || sensFeat)) {
+          const labels = imgFeat ? imgFeat.map((_,i)=>`F${i+1}`) : (sensFeat? sensFeat.map((_,i)=>`S${i+1}`):[]);
+          new Chart(ctxLine.getContext('2d'), {
+            type: 'line',
+            data: {
+              labels: labels,
+              datasets: [
+                imgFeat ? {label:'Image features', data: imgFeat, borderColor:'#3b82f6', fill:false} : null,
+                sensFeat ? {label:'Sensor features', data: sensFeat, borderColor:'#8b5cf6', fill:false} : null
+              ].filter(Boolean)
+            },
+            options: {responsive:true, maintainAspectRatio:true}
+          });
+        }
+      }catch(e){console.warn('Chart init failed', e)}
+    })();
   </script>
 
 </body>

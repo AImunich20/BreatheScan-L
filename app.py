@@ -8,6 +8,7 @@ from HarmoMed import HarmoMed_lir
 import psutil
 import time
 from Breathescan import Breathescan_L
+from Breathescan import retrain_model
 from datetime import datetime
 import smtplib
 from email.message import EmailMessage
@@ -97,6 +98,45 @@ def admin_dashboard():
     if not admin_required():
         return redirect(url_for("home"))
     return render_template("admin_dashboard.html")
+
+
+@app.route("/admin/retrain", methods=["POST"])
+def admin_retrain():
+    if not admin_required():
+        return jsonify(success=False, msg="unauthorized"), 403
+
+    # optional params from JSON body
+    data = request.get_json(silent=True) or {}
+    n_samples = int(data.get("n_samples", 1000))
+    seed = int(data.get("seed", 42))
+
+    # run retrain in background thread so HTTP returns immediately
+    import threading
+
+    def _job():
+        try:
+            retrain_model(n_samples=n_samples, seed=seed)
+            print("Retrain completed")
+        except Exception as e:
+            print("Retrain failed:", e)
+
+    t = threading.Thread(target=_job, daemon=True)
+    t.start()
+
+    return jsonify(success=True, msg="retrain started")
+
+
+@app.route('/run_file/<path:filepath>')
+def run_file(filepath):
+    # Serve files only from the USER_DIR tree for safety
+    safe_root = os.path.abspath(USER_DIR)
+    target = os.path.abspath(os.path.join(safe_root, filepath))
+    if not target.startswith(safe_root):
+        return "Forbidden", 403
+    directory = os.path.dirname(target)
+    filename = os.path.basename(target)
+    return send_from_directory(directory, filename)
+
 @app.route("/api/admin/server_status")
 def server_status():
     if not admin_required():
@@ -417,12 +457,111 @@ def test():
             ans=dst_qs,
             result_dir=result_dir
         )
-
         flash("AI Analysis completed", "success")
+
+        # Append run metadata to log_history.csv
+        log_dir = os.path.join(USER_DIR, "admin", "uploads")
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, "log_history.csv")
+
+        # ensure file exists with header
+        if not os.path.exists(log_file):
+            with open(log_file, "w", newline="", encoding="utf-8") as lf:
+                lf.write("upload_no,date,time,folder\n")
+
+        # compute next upload_no
+        next_no = 1
+        try:
+            with open(log_file, newline="", encoding="utf-8") as lf:
+                rows = [r for r in lf.read().splitlines() if r.strip()]
+                if len(rows) > 1:
+                    last = rows[-1].split(",")[0]
+                    next_no = int(last) + 1
+        except Exception:
+            next_no = 1
+
+        now = datetime.now()
+        date_str = now.strftime("%d/%m/%Y")
+        time_str = now.strftime("%H:%M:%S")
+
+        with open(log_file, "a", newline="", encoding="utf-8") as lf:
+            lf.write(f"{next_no},{date_str},{time_str},{run_id}\n")
+        # load analysis_result.json to pass to template
+        analysis_json = None
+        try:
+            with open(os.path.join(result_dir, "analysis_result.json"), encoding="utf-8") as jf:
+                analysis_json = json.load(jf)
+        except Exception as e:
+            print("Failed to load analysis_result.json:", e)
+
+    # convert file paths in analysis_json to URLs served by /run_file/
+        def to_url(p):
+            if not p:
+                return p
+            # make path relative to USER_DIR if it starts with USER_DIR
+            p_abs = os.path.abspath(p)
+            user_root = os.path.abspath(USER_DIR)
+            if p_abs.startswith(user_root):
+                rel = os.path.relpath(p_abs, user_root)
+                return url_for('run_file', filepath=rel)
+            return p
+
+        if analysis_json:
+            analysis_json['processed_image'] = to_url(analysis_json.get('processed_image'))
+            for p in analysis_json.get('per_image', []):
+                p['result_image'] = to_url(p.get('result_image'))
+                p['input'] = to_url(p.get('input'))
+
+        # collect run folder files and result folder files for display
+        run_files = []
+        result_files = []
+        try:
+            for root, dirs, files in os.walk(run_dir):
+                for fn in files:
+                    full = os.path.join(root, fn)
+                    run_files.append({
+                        'name': fn,
+                        'url': url_for('run_file', filepath=os.path.relpath(full, USER_DIR))
+                    })
+            for root, dirs, files in os.walk(result_dir):
+                for fn in files:
+                    full = os.path.join(root, fn)
+                    result_files.append({
+                        'name': fn,
+                        'url': url_for('run_file', filepath=os.path.relpath(full, USER_DIR))
+                    })
+        except Exception as e:
+            print('Failed to collect run/result files:', e)
+
+        # Reduce analysis_json to only the requested chat fields
+        chat_messages = []
+        if analysis_json:
+            # add top-level entries as separate messages
+            for key in [
+                'image_features',
+                'sensor_features',
+                'questionnaire_score',
+                'risk_probability',
+                'risk_level',
+                'model_version'
+            ]:
+                if key in analysis_json:
+                    chat_messages.append({'role': 'system', 'name': key, 'content': analysis_json[key]})
+
+            # add risk_breakdown sub-entries if present
+            rb = analysis_json.get('risk_breakdown') or {}
+            for rk in ['image_risk', 'sensor_risk', 'questionnaire_risk']:
+                if rk in rb:
+                    chat_messages.append({'role': 'system', 'name': rk, 'content': rb[rk]})
+
+        # attach files lists as metadata (not shown in chat)
+        reduced = {'chat_messages': chat_messages, 'run_files': run_files, 'result_files': result_files}
+
         return render_template(
             "test.html",
             result=result,
-            run_id=run_id
+            run_id=run_id,
+            analysis=reduced
         )
 
     return render_template("test.html")

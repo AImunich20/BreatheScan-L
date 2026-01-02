@@ -1,4 +1,5 @@
 import cv2
+from datetime import datetime
 import os
 import joblib
 import numpy as np
@@ -285,6 +286,15 @@ def train_synthetic_model(n_samples=1000, seed=42):
 
     logger.info("Synthetic model trained")
 
+
+def retrain_model(n_samples=1000, seed=42):
+    """Public retrain wrapper. Trains and re-saves model and scaler.
+
+    Returns path to saved model and scaler.
+    """
+    train_synthetic_model(n_samples=n_samples, seed=seed)
+    return MODEL_PATH, SCALER_PATH
+
 def load_model_and_scaler():
     if not os.path.exists(MODEL_PATH):
         train_synthetic_model()
@@ -305,8 +315,11 @@ def build_feature_vector(image_path, sensor_csv, answers):
 
 def run_harmomed_safe(input_images, ref_image, out_path):
     result = HarmoMed_lir(input_images, ref_image, out_path)
-    if not isinstance(result, str) or not os.path.exists(result):
-        raise RuntimeError("HarmoMed failed")
+    # expect dict with final_image and per_image
+    if not isinstance(result, dict) or "final_image" not in result:
+        raise RuntimeError("HarmoMed failed or returned unexpected structure")
+    if not os.path.exists(result["final_image"]):
+        raise RuntimeError("HarmoMed final image missing")
     return result
 
 def run_ai_screening(image_path, sensor_csv, questionnaire_answers):
@@ -352,11 +365,14 @@ def Breathescan_L(input_img, path_img, sensor, ans, result_dir):
         # ensure iterable -> list of str
         input_images = [str(p) for p in input_img]
 
-    processed_image = run_harmomed_safe(
+    harmo_result = run_harmomed_safe(
         input_images,
         "wtest2.jpg",
         path_img
     )
+    processed_image = harmo_result.get("final_image")
+
+    per_image_info = harmo_result.get("per_image", [])
 
     # 2) Load & convert questionnaire CSV -> List[int] (10 answers)
     questionnaire_answers = load_questionnaire_answers(ans)
@@ -369,13 +385,60 @@ def Breathescan_L(input_img, path_img, sensor, ans, result_dir):
     )
 
     # 4) Save JSON result (numpy-safe)
+    # include additional metadata
+    output_payload = to_json_safe(result.__dict__)
+    output_payload["processed_image"] = processed_image
+    output_payload["per_image"] = per_image_info
+    output_payload["feature_vector"] = build_feature_vector(processed_image, sensor, questionnaire_answers).tolist()
+    output_payload["timestamp"] = datetime.now().isoformat()
+
+    # Build color_summary aggregation
+    color_summary = {
+        "per_image_colors": [],
+        "aggregated": {}
+    }
+
+    b_list = []
+    c_list = []
+    color_diff_means = []
+    for p in per_image_info:
+        meta = p.get("processing_meta") or {}
+        per = {
+            "input": p.get("input"),
+            "filename": p.get("filename"),
+            "ref_avg_color": meta.get("ref_avg_color"),
+            "corrected_avg_color": meta.get("corrected_avg_color"),
+            "warm_corrected_avg_color": meta.get("warm_corrected_avg_color"),
+            "color_diff_result_mean": meta.get("color_diff_result_mean")
+        }
+        color_summary["per_image_colors"].append(per)
+
+        if meta.get("total_brightness_change") is not None:
+            b_list.append(meta.get("total_brightness_change"))
+        if meta.get("total_contrast_change") is not None:
+            c_list.append(meta.get("total_contrast_change"))
+        if meta.get("color_diff_result_mean") is not None:
+            color_diff_means.append(meta.get("color_diff_result_mean"))
+
+    # aggregated stats
+    def mean_or_none(x):
+        return None if not x else float(np.mean(x))
+
+    color_summary["aggregated"] = {
+        "mean_total_brightness_change": mean_or_none(b_list),
+        "mean_total_contrast_change": mean_or_none(c_list),
+        "mean_color_diff_per_channel": None
+    }
+
+    if color_diff_means:
+        arr = np.array(color_diff_means, dtype=float)
+        # mean across images -> per-channel mean
+        color_summary["aggregated"]["mean_color_diff_per_channel"] = list(np.mean(arr, axis=0).astype(float))
+
+    output_payload["color_summary"] = color_summary
+
     result_path = os.path.join(result_dir, "analysis_result.json")
     with open(result_path, "w", encoding="utf-8") as f:
-        json.dump(
-            to_json_safe(result.__dict__),
-            f,
-            ensure_ascii=False,
-            indent=4
-        )
+        json.dump(output_payload, f, ensure_ascii=False, indent=4)
 
     return result

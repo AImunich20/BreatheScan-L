@@ -275,9 +275,25 @@ def processing_img(refpath, targetpath, filename_path, output_dir=None):
     cv2.imwrite(result_image_path, cv2.cvtColor(true_corrected_img_rgb, cv2.COLOR_RGB2BGR))
     plt.tight_layout()
     plt.savefig(plot_image_path, dpi=300)
+
+    # prepare processing metadata
+    processing_meta = {
+        "brightness_changes": [float(x) for x in brightness_changes],
+        "contrast_changes": [float(x) for x in contrast_changes],
+        "color_changes": [list(map(float, c)) for c in color_changes],
+        "total_brightness_change": float(total_brightness_change),
+        "total_contrast_change": float(total_contrast_change),
+        "total_color_change": float(total_color_change),
+        "ref_avg_color": list(map(float, ref_avg_color)),
+        "corrected_avg_color": list(map(float, corrected_avg_color)),
+        "warm_corrected_avg_color": list(map(float, warm_corrected_avg_color)),
+        "color_diff_result_mean": list(map(float, np.mean(color_diff_result, axis=(0, 1))))
+    }
+
     return {
         "result_image": result_image_path,
-        "plot": plot_image_path
+        "plot": plot_image_path,
+        "processing_meta": processing_meta
     }
 
 def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image_log.csv", output_dir=None):
@@ -298,6 +314,7 @@ def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image
     return {
         "result_image": result.get("result_image"),
         "plot": result.get("plot"),
+        "processing_meta": result.get("processing_meta"),
         "filename": new_filename
     }
 
@@ -333,6 +350,7 @@ def HarmoMed_lir(target_img, reference_img, output_path):
         output_dir = os.path.dirname(output_path) or "."
     os.makedirs(output_dir, exist_ok=True)
 
+    per_image_info = []
     for path in target_img:
         if not os.path.exists(path):
             continue
@@ -350,6 +368,16 @@ def HarmoMed_lir(target_img, reference_img, output_path):
             )
 
             result_img_path = result.get("result_image")
+            plot_path = result.get("plot")
+            filename_id = result.get("filename")
+
+            per_image_info.append({
+                "input": path,
+                "result_image": result_img_path,
+                "plot": plot_path,
+                "filename": filename_id,
+                "processing_meta": result.get("processing_meta")
+            })
 
             if result_img_path and os.path.exists(result_img_path):
                 img = cv2.imread(result_img_path)
@@ -377,4 +405,8 @@ def HarmoMed_lir(target_img, reference_img, output_path):
     if not success:
         raise RuntimeError(f"cv2.imwrite failed: {output_path}")
 
-    return output_path
+    # Return structured result including per-image info
+    return {
+        "final_image": output_path,
+        "per_image": per_image_info
+    }
