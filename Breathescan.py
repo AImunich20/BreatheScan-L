@@ -86,24 +86,91 @@ def extract_image_features(image_path: str) -> List[float]:
         raise FileNotFoundError(image_path)
 
     img = cv2.imread(image_path)
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    if img is None:
+        raise ValueError(f"Failed to read image: {image_path}")
+
+    # Resize to a controlled size for stable stats (maintain aspect ratio)
+    h0, w0 = img.shape[:2]
+    max_dim = 1024
+    if max(h0, w0) > max_dim:
+        scale = max_dim / max(h0, w0)
+        img = cv2.resize(img, (int(w0 * scale), int(h0 * scale)), interpolation=cv2.INTER_AREA)
+
+    # Enhance local contrast: CLAHE on the V channel
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    l_eq = clahe.apply(l)
+    lab_eq = cv2.merge([l_eq, a, b])
+    img_eq = cv2.cvtColor(lab_eq, cv2.COLOR_LAB2BGR)
+
+    # Skin detection via YCrCb color space (more robust than simple thresholding)
+    ycrcb = cv2.cvtColor(img_eq, cv2.COLOR_BGR2YCrCb)
+    _, cr, cb = cv2.split(ycrcb)
+    # Empirical skin thresholds (tuned for varied illumination)
+    skin_mask = cv2.inRange(ycrcb, np.array([0, 133, 77]), np.array([255, 173, 127]))
+    # Morphological cleanup
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (7, 7))
+    skin_mask = cv2.morphologyEx(skin_mask, cv2.MORPH_CLOSE, kernel)
+    skin_mask = cv2.morphologyEx(skin_mask, cv2.MORPH_OPEN, kernel)
+
+    # Convert to HSV and LAB for combined yellow detection
+    hsv = cv2.cvtColor(img_eq, cv2.COLOR_BGR2HSV)
+    lab2 = cv2.cvtColor(img_eq, cv2.COLOR_BGR2LAB)
+
+    # HSV yellow range (tuned narrower for accuracy)
+    hsv_lower = np.array([18, 60, 60])
+    hsv_upper = np.array([35, 255, 255])
+    mask_hsv = cv2.inRange(hsv, hsv_lower, hsv_upper)
+
+    # LAB: yellow often has high 'b' channel
+    l2, a2, b2 = cv2.split(lab2)
+    # Normalize and threshold b channel adaptively
+    b2_norm = cv2.normalize(b2, None, 0, 255, cv2.NORM_MINMAX)
+    _, mask_lab = cv2.threshold(b2_norm, 150, 255, cv2.THRESH_BINARY)
+
+    # Combine masks and restrict to skin region (reduce false positives)
+    yellow_mask = cv2.bitwise_and(mask_hsv, mask_lab)
+    yellow_mask = cv2.bitwise_and(yellow_mask, skin_mask)
+
+    # Morphological cleanup and connected components filtering
+    kernel2 = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    yellow_mask = cv2.morphologyEx(yellow_mask, cv2.MORPH_CLOSE, kernel2)
+    yellow_mask = cv2.morphologyEx(yellow_mask, cv2.MORPH_OPEN, kernel2)
+
+    # Connected components: keep sufficiently large regions to avoid noise
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(yellow_mask, connectivity=8)
+    final_mask = np.zeros_like(yellow_mask)
+    min_area = max(50, (img.shape[0] * img.shape[1]) // 2000)  # adaptive min area
+    for i in range(1, num_labels):
+        area = stats[i, cv2.CC_STAT_AREA]
+        if area >= min_area:
+            final_mask[labels == i] = 255
+
+    # Compute stable statistics: percentage area and robust means (median)
+    yellow_area = np.count_nonzero(final_mask)
+    total_skin_area = max(1, np.count_nonzero(skin_mask))
+    yellow_ratio = yellow_area / total_skin_area
+
+    # Compute robust color statistics (median) over final_mask in HSV
     h, s, v = cv2.split(hsv)
+    masked_h = h[final_mask > 0]
+    masked_s = s[final_mask > 0]
+    masked_v = v[final_mask > 0]
 
-    mask = cv2.inRange(hsv, YELLOW_HSV_LOWER, YELLOW_HSV_UPPER)
-    yellow_ratio = np.count_nonzero(mask) / (mask.size + EPS)
-
-    if np.any(mask):
-        h_mean = np.mean(h[mask > 0])
-        s_mean = np.mean(s[mask > 0])
-        v_mean = np.mean(v[mask > 0])
+    if masked_h.size > 0:
+        h_med = float(np.median(masked_h))
+        s_med = float(np.median(masked_s))
+        v_med = float(np.median(masked_v))
     else:
-        h_mean = s_mean = v_mean = 0.0
+        h_med = s_med = v_med = 0.0
 
+    # Return percentages and medians (suitable for downstream scaling)
     return [
-        round(yellow_ratio * 100, 3),
-        round(h_mean, 3),
-        round(s_mean, 3),
-        round(v_mean, 3)
+        round(yellow_ratio * 100, 4),
+        round(h_med, 3),
+        round(s_med, 3),
+        round(v_med, 3)
     ]
 
 # ================= SENSOR FEATURES =================
@@ -278,8 +345,15 @@ def Breathescan_L(input_img, path_img, sensor, ans, result_dir):
     os.makedirs(result_dir, exist_ok=True)
 
     # 1) Image preprocessing (HarmoMed)
+    # Normalize input_img: allow single path or list
+    if isinstance(input_img, (str, os.PathLike)):
+        input_images = [str(input_img)]
+    else:
+        # ensure iterable -> list of str
+        input_images = [str(p) for p in input_img]
+
     processed_image = run_harmomed_safe(
-        [input_img],
+        input_images,
         "wtest2.jpg",
         path_img
     )

@@ -1,0 +1,23 @@
+{
+    "image_features": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+    ],
+    "sensor_features": [
+        0.007000000216066837,
+        -0.004999999888241291,
+        0.02800000086426735,
+        0.013000000268220901
+    ],
+    "questionnaire_score": 0.8999999761581421,
+    "risk_probability": 0.921,
+    "risk_level": "Very high risk",
+    "model_version": "2.0.0",
+    "risk_breakdown": {
+        "image_risk": 0.0,
+        "sensor_risk": 0.013000000268220901,
+        "questionnaire_risk": 0.9
+    }
+}

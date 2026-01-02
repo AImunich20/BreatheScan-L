@@ -11,6 +11,8 @@ from Breathescan import Breathescan_L
 from datetime import datetime
 import smtplib
 from email.message import EmailMessage
+from datetime import datetime
+import shutil
 
 print("sdszkwptchwgsbyw")
 
@@ -295,16 +297,6 @@ def register():
         "last_name": data["last_name"],
         "email": data["email"],
         "phone": data["phone"],
-        # "medical": {
-        #     "age": "",
-        #     "gender": "",
-        #     "height_cm": "",
-        #     "weight_kg": "",
-        #     "blood_type": "",
-        #     "chronic_disease": "",
-        #     "allergy": "",
-        #     "note": ""
-        # },
         "adminst": False
     }
 
@@ -356,9 +348,6 @@ def update_profile():
     return jsonify(success=True)
 
 # ---------------- TEST ----------------
-from datetime import datetime
-import shutil
-
 @app.route("/test", methods=["GET", "POST"])
 def test():
     if "user" not in session:
@@ -415,8 +404,14 @@ def test():
         shutil.copy(src_qs, dst_qs)
 
         # ---------- AI PIPELINE ----------
+        input_images = []
+        if saved.get("eyeImage"):
+            input_images.append(saved.get("eyeImage"))
+        if saved.get("skinImage"):
+            input_images.append(saved.get("skinImage"))
+
         result = Breathescan_L(
-            input_img=saved.get("eyeImage"),
+            input_img=input_images,
             path_img=run_dir,
             sensor=saved.get("enoseCSV"),
             ans=dst_qs,

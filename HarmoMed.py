@@ -136,7 +136,7 @@ def apply_adjustments(target_img, brightness_diff, contrast_diff, color_diff):
 
     return (target_img * 255).astype(np.uint8)
 
-def processing_img(refpath, targetpath, filename_path):
+def processing_img(refpath, targetpath, filename_path, output_dir=None):
     reference_img = cv2.imread(refpath)
     target_img = cv2.imread(targetpath)
 
@@ -257,11 +257,30 @@ def processing_img(refpath, targetpath, filename_path):
     print(f"Total Contrast Adjustment: {total_contrast_change}")
     print(f"Total Color Difference: {total_color_change}")
 
-    cv2.imwrite(f"static/results/{filename_path}true_corrected_img_rgb1.jpg", cv2.cvtColor(true_corrected_img_rgb, cv2.COLOR_RGB2BGR))
-    plt.tight_layout()
-    plt.savefig(f"static/results/{filename_path}result_plot.jpg", dpi=300)
+    # ensure output directory exists; create a `result` subfolder
+    if output_dir is None:
+        output_dir = "static/results/"
 
-def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image_log.csv"):
+    # If output_dir points to a folder with a timestamp name, create a 'result' subfolder inside it
+    result_dir = os.path.join(output_dir, "result") if os.path.isdir(output_dir) or output_dir.endswith(os.sep) else os.path.join(output_dir, "result")
+    os.makedirs(result_dir, exist_ok=True)
+
+    # Use the basename of the provided output_dir (likely the timestamp folder) for naming
+    folder_basename = os.path.basename(os.path.normpath(output_dir)) or filename_path
+
+    # Include filename_path (numeric id) to avoid collisions when saving multiple images
+    result_image_path = os.path.join(result_dir, f"{folder_basename}_{filename_path}_true_corrected_img_rgb1.jpg")
+    plot_image_path = os.path.join(result_dir, f"{folder_basename}_{filename_path}_result_plot.jpg")
+
+    cv2.imwrite(result_image_path, cv2.cvtColor(true_corrected_img_rgb, cv2.COLOR_RGB2BGR))
+    plt.tight_layout()
+    plt.savefig(plot_image_path, dpi=300)
+    return {
+        "result_image": result_image_path,
+        "plot": plot_image_path
+    }
+
+def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image_log.csv", output_dir=None):
     UPLOAD_FOLDER = 'static/uploads/'
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
     
@@ -274,25 +293,45 @@ def run_image_processing_pipeline(reference_path, uploaded_file, csv_file="image
     target_path = os.path.join(UPLOAD_FOLDER, f"{new_filename}.jpg")
     uploaded_file.save(target_path)
 
-    processing_img(reference_path, target_path, filename_path=new_filename)
+    result = processing_img(reference_path, target_path, filename_path=new_filename, output_dir=output_dir)
 
-    result_img_path = f"static/results/{new_filename}true_corrected_img_rgb1.jpg"
-    plot_path = f"static/results/{new_filename}result_plot.jpg"
     return {
-        "result_image": result_img_path,
-        "plot": plot_path,
+        "result_image": result.get("result_image"),
+        "plot": result.get("plot"),
         "filename": new_filename
     }
 
 
 def HarmoMed_lir(target_img, reference_img, output_path):
-    """
-    target_img    : list[str]  -> path ของภาพผิว + ตา
-    reference_img : str        -> path reference
-    output_path   : str        -> path output (file หรือ folder)
-    """
-
     processed_images = []
+
+    # Normalize target_img: allow a single path string or a list of paths/FileStorage
+    normalized_paths = []
+    # If a single string/PathLike is passed, wrap into list
+    if isinstance(target_img, (str, os.PathLike)):
+        target_img = [str(target_img)]
+
+    for item in target_img:
+        # If item is a FileStorage, save it to uploads and use that path
+        if isinstance(item, FileStorage):
+            os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+            next_filename = get_next_filename(csv_file)
+            save_name = f"{next_filename}.jpg"
+            save_path = os.path.join(UPLOAD_FOLDER, save_name)
+            item.save(save_path)
+            normalized_paths.append(save_path)
+        else:
+            normalized_paths.append(str(item))
+
+    # replace target_img with normalized_paths for processing
+    target_img = normalized_paths
+
+    # Determine output directory: if output_path is a directory use it, else use its parent
+    if os.path.isdir(output_path):
+        output_dir = output_path
+    else:
+        output_dir = os.path.dirname(output_path) or "."
+    os.makedirs(output_dir, exist_ok=True)
 
     for path in target_img:
         if not os.path.exists(path):
@@ -306,7 +345,8 @@ def HarmoMed_lir(target_img, reference_img, output_path):
 
             result = run_image_processing_pipeline(
                 reference_img,
-                uploaded_file
+                uploaded_file,
+                output_dir=output_dir
             )
 
             result_img_path = result.get("result_image")
@@ -318,20 +358,14 @@ def HarmoMed_lir(target_img, reference_img, output_path):
 
     if not processed_images:
         raise ValueError("HarmoMed_lir: ไม่พบภาพผลลัพธ์จาก pipeline")
-
-    # ---------- resize ----------
     base_h, base_w = processed_images[0].shape[:2]
     resized_images = [
         cv2.resize(img, (base_w, base_h))
         for img in processed_images
     ]
 
-    # ---------- average ----------
     final_img = np.mean(resized_images, axis=0).astype(np.uint8)
 
-    # =================================================
-    # 🔥 FIX สำคัญ: จัดการ output_path ให้ปลอดภัย
-    # =================================================
     if os.path.isdir(output_path):
         output_path = os.path.join(output_path, "harmomed_result.png")
 
