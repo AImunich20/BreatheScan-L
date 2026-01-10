@@ -168,8 +168,8 @@ git clone https://github.com/AImunich20/BreatheScan-L.git
 
 ```bash
 python -m venv venv
-venv\Scripts\activate |(window)
-source venv/bin/activate |(linux)
+venv\Scripts\activate
+source venv/bin/activate 
 ```
 
 ### Install Dependencies
