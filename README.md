@@ -161,15 +161,15 @@ BreatheScan-L/
 ### Clone Repository
 
 ```bash
-git clone <repository-url>
-cd BreatheScan-L
+git clone https://github.com/AImunich20/BreatheScan-L.git
 ```
 
 ### Create Virtual Environment
 
 ```bash
 python -m venv venv
-venv\Scripts\activate
+venv\Scripts\activate |(window)
+source venv/bin/activate |(linux)
 ```
 
 ### Install Dependencies
