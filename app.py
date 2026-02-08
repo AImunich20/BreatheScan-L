@@ -12,11 +12,9 @@ from Breathescan import retrain_model
 from datetime import datetime
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime
 import shutil
-
-print("sdszkwptchwgsbyw")
-
+import matplotlib
+matplotlib.use('agg')
 
 app = Flask(__name__)
 app.secret_key = "20"

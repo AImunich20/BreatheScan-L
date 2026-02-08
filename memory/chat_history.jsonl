@@ -19,3 +19,5 @@
 {"timestamp": "2026-01-02T03:47:07.625147Z", "user": "มิ้น 1+3 เท่ากับเท่าไหร่", "ai": "มิ้น 1 + 3 = 4"}
 {"timestamp": "2026-01-02T03:49:40.675943Z", "user": "สวัสดี", "ai": "สวัสดีครับ/ค่ะ"}
 {"timestamp": "2026-01-02T04:29:31.719613Z", "user": "hello", "ai": "Execution failed: llama runner process has terminated: error loading model: unable to allocate CUDA0 buffer\nllama_model_load_from_file_impl: failed to load model (status code: 500)"}
+{"timestamp": "2026-02-08T12:59:57.457676Z", "user": "hi", "ai": "Execution failed: model 'llama3.3' not found (status code: 404)"}
+{"timestamp": "2026-02-08T13:09:34.973088Z", "user": "hello", "ai": "มิ้น"}

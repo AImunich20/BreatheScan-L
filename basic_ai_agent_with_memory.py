@@ -446,7 +446,7 @@ def main(memory_dir):
     parser.add_argument("--history-file", default="chat_history.jsonl")
     parser.add_argument("--max-messages", type=int, default=200)
     parser.add_argument("--max-chars", type=int, default=4000)
-    parser.add_argument("--model", default="llama3.3")
+    parser.add_argument("--model", default="llama3.2:1b")
     parser.add_argument("--log-level", default="WARNING")
     parser.add_argument("--use-agent", action="store_true", default=True)
     args = parser.parse_args()
