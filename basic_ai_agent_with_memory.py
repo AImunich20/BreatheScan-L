@@ -14,11 +14,73 @@ import argparse
 import re
 from typing import List, Dict, Any
 from enum import Enum
+import time
+from collections import OrderedDict
 
 llm = None
 chat_history = ChatMessageHistory()
 vector_store = None
 embeddings = None
+
+# Simple in-memory LRU cache for recent prompts and searches to speed repeated queries
+class LRUCache:
+    def __init__(self, maxsize=128):
+        self.maxsize = maxsize
+        self.cache = OrderedDict()
+
+    def get(self, key):
+        try:
+            val = self.cache.pop(key)
+            self.cache[key] = val
+            return val
+        except KeyError:
+            return None
+
+    def set(self, key, value):
+        if key in self.cache:
+            self.cache.pop(key)
+        elif len(self.cache) >= self.maxsize:
+            self.cache.popitem(last=False)
+        self.cache[key] = value
+
+
+# caches
+LLM_RESPONSE_CACHE = LRUCache(maxsize=256)
+VECTOR_SEARCH_CACHE = LRUCache(maxsize=256)
+
+
+def llm_invoke(prompt_text, timeout_seconds=30, retries=1, use_cache=True):
+    """Invoke the global `llm` with timing, optional retries, and simple caching.
+    Returns a string (the text result) to keep callers simple.
+    """
+    if use_cache:
+        cached = LLM_RESPONSE_CACHE.get(prompt_text)
+        if cached is not None:
+            logging.debug("LLM cache hit")
+            return cached
+
+    if llm is None:
+        raise RuntimeError("LLM not initialized")
+
+    attempt = 0
+    last_exc = None
+    while attempt <= retries:
+        attempt += 1
+        start = time.time()
+        try:
+            raw = llm.invoke(prompt_text)
+            result_text = getattr(raw, "text", str(raw)).strip()
+            duration = time.time() - start
+            logging.debug(f"LLM invoke took {duration:.2f}s")
+            if use_cache:
+                LLM_RESPONSE_CACHE.set(prompt_text, result_text)
+            return result_text
+        except Exception as e:
+            last_exc = e
+            logging.warning(f"LLM invoke attempt {attempt} failed: {e}")
+            time.sleep(0.2)
+
+    raise last_exc
 
 SUMMARY_FILE = "memory/summary.json"
 VECTOR_STORE_PATH = "memory/vector_store"
@@ -128,12 +190,19 @@ def add_to_vector_memory(question: str, answer: str):
 
 def search_vector_memory(query: str, k: int = 3) -> str:
     try:
+        # consult cache first
+        cache_key = f"{query}|{k}"
+        cached = VECTOR_SEARCH_CACHE.get(cache_key)
+        if cached is not None:
+            logging.debug("Vector search cache hit")
+            return cached
         if vector_store is None:
             return "No memory"
         results = vector_store.similarity_search(query, k=k)
         if not results:
             return ""
         context = "\n\n---\n".join([r.page_content for r in results])
+        VECTOR_SEARCH_CACHE.set(cache_key, context)
         return context
     except Exception as e:
         logging.warning(f"Vector search failed: {e}")
@@ -237,8 +306,7 @@ class MintAgent:
 Based on this question: {question}\n\nAnd this analysis: {analysis}\n\nCreate a short 2-3 step plan.
 """
         try:
-            result = self.llm.invoke(plan_prompt)
-            steps_text = getattr(result, "text", str(result))
+            steps_text = llm_invoke(plan_prompt)
             steps = [s.strip() for s in steps_text.split('\n') if s.strip()]
             return steps[:3]
         except:
@@ -255,8 +323,7 @@ Based on this question: {question}\n\nAnd this analysis: {analysis}\n\nCreate a 
             + f"\n\nQuestion: {question}\n\nAnswer concisely:\n"
         )
         try:
-            result = self.llm.invoke(execution_prompt)
-            return getattr(result, "text", str(result)).strip()
+            return llm_invoke(execution_prompt)
         except Exception as e:
             return f"Execution failed: {e}"
 
@@ -365,8 +432,7 @@ Conversation:
 Summary:
 """
     try:
-        result = llm.invoke(summary_prompt)
-        summary_text = getattr(result, "text", str(result))
+        summary_text = llm_invoke(summary_prompt)
         os.makedirs(os.path.dirname(SUMMARY_FILE), exist_ok=True)
         with open(SUMMARY_FILE, "w", encoding="utf-8") as f:
             json.dump({"summary": summary_text}, f, ensure_ascii=False, indent=2)
@@ -405,8 +471,7 @@ def run_chain(question, save_file, max_messages, max_chars, use_agent=True):
                 question=question,
                 vector_context=vector_context,
             )
-            raw = llm.invoke(prompt_text)
-            answer = getattr(raw, "text", str(raw)).strip()
+            answer = llm_invoke(prompt_text)
     except Exception as e:
         logging.exception("LLM invocation failed")
         answer = f"Error: {e}"

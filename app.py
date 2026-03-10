@@ -14,6 +14,7 @@ import smtplib
 from email.message import EmailMessage
 import shutil
 import matplotlib
+
 matplotlib.use('agg')
 
 app = Flask(__name__)
